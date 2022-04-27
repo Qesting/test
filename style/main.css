@@ -1,0 +1,43 @@
+@import url("https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css");
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css");
+
+body > .wrapper {
+    margin: 10px;
+}
+
+img.w {
+    width: 50vw;
+    max-width: 450px;
+}
+
+nav .navbar-brand {
+    font-size: clamp(2vh, 1.5rem, 5vh);
+
+    border-right: 0.1rem white solid;
+    padding-right: 1rem;
+    margin-right: 1rem;
+}
+
+form input[type="text"], form select, form input[type="number"] {
+    text-align: center;
+}
+
+div.wrapper nav.nav-tabs {
+    text-align: left;
+    white-space: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+nav.nav-tabs > a {
+    display: inline-block;
+}
+
+nav.bg-primary .nav-item {
+    color: white;
+}
+
+form#quest .form-group {
+    text-align: left;
+}
+
