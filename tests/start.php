@@ -57,12 +57,12 @@
                     $sql = mysqli_prepare($link, "SELECT id, can_laa, is_open, closed FROM session WHERE code=?");
                     mysqli_stmt_bind_param($sql, 's', $code);
                     mysqli_stmt_execute($sql);
-                    $res = mysqli_stmt_get_result($sql);
+                    $res1 = mysqli_stmt_get_result($sql);
         
-                    if (mysqli_num_rows($result) == 0) {
+                    if (mysqli_num_rows($res1) == 0) {
                         $notice = "e-Taki kod sesji nie istnieje!";
                     } else {
-                        $data = mysqli_fetch_assoc($result);
+                        $data = mysqli_fetch_assoc($res1);
                         if ($data['is_open'] == 0 && !empty($data['closed'])) {
                             $notice = "e-Sesja się już zakończyła!";
                         } else if ($data['is_open'] == 0) {
