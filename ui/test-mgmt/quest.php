@@ -49,7 +49,7 @@
                                 }
                             }
                             $_SESSION['tab'] = $_SESSION['maxtab'] + 1;
-                            header("location: ${SERVER['PHP_SELF']}");
+                            header("location: ${_SERVER['PHP_SELF']}");
                             exit;
                         } else {
                             $notice = "e-Musisz wybrać typ pytania!";
@@ -60,7 +60,7 @@
                         $points = argStrip($_POST['points']);
             
                         $sql = mysqli_prepare($link, "UPDATE question SET content=?, ans=?, points=? WHERE id=?");
-                        mysqli_stmt_bind_param($sql, 'siii', $qc, $ans, $points, $id,);
+                        mysqli_stmt_bind_param($sql, 'siii', $qc, $ans, $points, $id);
                         mysqli_stmt_execute($sql);
             
                         $sql = mysqli_prepare($link, "UPDATE answer SET content=? WHERE quest_id=? AND ans_id=?");
@@ -113,7 +113,7 @@
 
             $_SESSION['tab'] = $_SESSION['maxtab'] - 1;
             $_SESSION['notice'] = "s-Pomyślnie usunięto pytanie!";
-            header("location: ${SERVER['PHP_SELF']}");
+            header("location: ${_SERVER['PHP_SELF']}");
             exit;
         } else if (isset($_POST["aDel3"]) || isset($_POST["aDel4"]) || isset($_POST["aDel4"]) || isset($_POST["aDel5"]) || isset($_POST["aDel6"])) {
             // niepotrzebnie długi blok kodu, ale inaczej nie umiem
@@ -131,7 +131,7 @@
             mysqli_stmt_execute($sql);
 
             $_SESSION['notice'] = "s-Pomyślnie usunięto odpowiedź!";
-            header("location: ${SERVER['PHP_SELF']}");
+            header("location: ${_SERVER}");
             exit;
         } else if (isset($_POST['aAdd'])) {
 
@@ -150,7 +150,7 @@
             } else {
                 $_SESSION['notice'] = "e-Pytanie nie może mieć więcej niż 6 możliwych odpowiedzi!";
             }
-            header("location: ${SERVER['PHP_SELF']}");
+            header("location: ${_SERVER['PHP_SELF']}");
             exit;
         } else if (isset($_POST['img'])) {
             $_SESSION['qid'] = $id;
