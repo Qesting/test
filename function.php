@@ -74,31 +74,6 @@
     }
     
     /**
-     * Funkcja zapisująca odpowiedzi w bardziej eleganckiej formie niż w wersjach 0.1 - 1.0 
-     * - wywołanie: saveAns();
-     *
-     * @param  mixed $arr
-     * @return void
-     */
-    function saveAns() {
-        $num = count($_SESSION['ans']); // wykorzystanie faktu numeracji od 0, przy niepustej tablicy o domyślnym indeksowaniu array_key_last($arr) == count($arr) - 1
-
-        $corr = $_SESSION['c'];
-        $type = $_SESSION['t'];
-        $points = $_SESSION['p'];
-        $test = argStrip($_POST['ans']);
-        $ans = (is_array($test)) ? concArray($test) : $test; // jeżeli odpowiedź jest tablicą (type == 2), wykonaj na niej concArray()
-        unset($_SESSION['c'], $_SESSION['t'], $_SESSION['c'], $test);
-
-        $_SESSION['ans'][$num] = array(
-            "answer" => $ans,
-            "correct" => $corr,
-            "type" => $type,
-            "points" => $points
-        );
-    }
-    
-    /**
      * Funkcja oceniająca testy
      * - wywołanie: $score_cal = review();
      *
@@ -111,16 +86,18 @@
 
         if(is_array($arr)) {
             // dla każdego indeksu w $_SESSION['ans']
-            foreach($arr as $ans) {
+            foreach($arr as $key => $ans) {
                 if ($ans['type'] == 1) { // jeżeli typ == 1, po prostu porównaj
                     $points += ($ans['answer'] == $ans['correct']) ? $ans['points'] : 0;
                 } else if ($ans['type'] == 2) { // jeżeli typ == 2, sprawdź występowanie kolejnych znaków udzielonej odpowiedzi w poprawnej (po concArray())
-                    $temp = 0;
-                    $ansArray = str_split($ans['answer']); // string -> tablica pojedynczych znaków
-                    foreach ($ansArray as $char) {
-                        $temp += (str_contains($ans['correct'], $char)) ? $ans['points'] : -$ans['points'];
+                    if (!empty($ans['answer'])) {
+                        $temp = 0;
+                        $ansArray = str_split($ans['answer']); // string -> tablica pojedynczych znaków
+                        foreach ($ansArray as $char) {
+                            $temp += (str_contains($ans['correct'], $char)) ? $ans['points'] : -$ans['points'];
+                        }
+                        $points += ($temp >= 0) ? $temp : 0; // nie chcemy odejmować punktów
                     }
-                    $points += ($temp >= 0) ? $temp : 0; // nie chcemy odejmować punktów
                 } else if ($ans['type'] == 3) { // jeżeli typ == 3, skonwertuj obie na lowercase (dla wszystkich utf-8) i porównaj
                     mb_internal_encoding('UTF-8');
                     $points += (mb_strtolower($ans['answer']) == mb_strtolower($ans['correct'])) ? $ans['points'] : 0;

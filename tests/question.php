@@ -2,39 +2,73 @@
     session_start();
     require_once("../config.php");
 
-    $_SESSION['question'] += 1;
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
 
-    $rand = array_rand($_SESSION['quest_arr'], 1);
-    $qid = $_SESSION['quest_arr'][$rand];
-    array_splice($_SESSION['quest_arr'], $rand, 1);
-
-    if ($_SESSION['question'] > 1) {
-        saveAns();
+    if ($_SESSION['question'] === 0) {
+        $_SESSION['question'] += 1;
+    } else {
+        if ($_SERVER['REQUEST_METHOD'] == "POST") { // nie wychodź, jeżeli przesyłane są dane do sprawdzenia
+            $count = count($_SESSION['ans']);
+            for ($i = 0; $i < $count; $i++) { // zbierz wszystkie odpowiedzi
+                $test = (isset($_POST[$i])) ? argStrip($_POST[$i]['ans']) : "";
+                $ans = (is_array($test)) ? concArray($test) : $test;
+    
+                $_SESSION['ans'][$i]['answer'] = $ans;        
+            }
+    
+            header("location: summary.php");
+            exit;
+        } else {
+            header("location: summary.php"); // jeżeli strona została po prostu odświeżona, wyjdź
+            exit;
+        }
     }
 
-    if ($_SESSION['question'] > $_SESSION['quest_num']) {
-        header("location: summary.php");
+    $prevNext = $script = $sub = "";
+
+    $qnum = 0;
+    $qcount = $_SESSION['quest_num'];
+
+    if (!isset($_SESSION['qOrder'])) {
+        $_SESSION['qOrder'] = $_SESSION['quest_arr'];
+        shuffle($_SESSION['qOrder']);
     }
-?>
+
+    $rand = $_SESSION['qOrder'];
+
+    $btn = "<div class='form-group mt-3' style='text-align: center;'>
+                <div class='btn-group'>
+                    <button type='button' class='btn btn-secondary' id='prev'>Poprzednie pytanie</button>
+                    <span class='btn btn-outline-secondary disabled'></span>
+                    <button type='button' class='btn btn-secondary' id='next'>Następne pytanie</button>
+                </div>
+            </div>";
+
+    $prevNext = ($_SESSION['vert'] == 0) ? $btn : "";
+    $script = ($_SESSION['vert'] == 0) ? "<script src='js/questTabs.js'></script>" : "";
+    $sub = ($_SESSION['vert'] == 1) ? "<input type='submit' class='btn btn-primary mt-3' value='Zatwierdź'>" : "";
+
+    ?>
 
 <!DOCTYPE html>
 <html lang="pl-PL">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Pytanie
-            <?php echo $_SESSION['question']; ?>
-        </title>
+        <title>Odpowiedz na pytania</title>
         <link rel="stylesheet" href="../style/main.css">
         <style>
             body{ font: 14px sans-serif; text-align: center;}
-            ul#rules {
-                text-align: left;
+            
+            .hidden {
+                display: none;
             }
-        </style>
+            </style>
     </head>
     <body>
-    <nav class="navbar navbar-expand navbar-dark bg-primary">
+        <nav class="navbar navbar-expand navbar-dark bg-primary">
             <div class="container-fluid">
                 <a class="navbar-brand"><b>T</b>ESTOPOL</a>
                 <div class="collapse navbar-collapse">
@@ -46,15 +80,36 @@
         </nav>
         <div class="wrapper">
             <div class="container">
-                <div class="card mt-5">
+                <form method='post' id='quest'>
                     <?php
-                        require_once("question_sel.php");
+                        $corr = $type = $points = 0;
+                        
+                        for ($iter = 0; $iter < $qcount; $iter++) {
+                            $qnum++;
+                            
+                            $qid = $rand[$iter];
+                            
+                            echo "<div class='card mt-5' id='${iter}'>"; 
+                            require("question_sel.php");
+                            echo "</div>";
+                            
+                            $_SESSION['ans'][$iter] = array(
+                                "correct" => $corr,
+                                "type" => $type,
+                                "points" => $points
+                            );
+                        }
                     ?>
-                </div>
+                    <?php echo $prevNext; ?>
+                    <div class='form-group' id='sub-grp' style="text-align: center;">
+                        <?php echo $sub; ?>
+                    </div>
+                </form>
+                <p id="alert"></p>
             </div>
         </div>
         <script>
-            let finish = new Date(<?php echo $_SESSION['finish_time']; ?>);
+            /*let finish = new Date(<?php echo $_SESSION['finish_time']; ?>);
             finish = Math.round(finish.getTime());
             let x = setInterval(function() {
                 let now = Math.round(new Date().getTime() / 1000);
@@ -68,15 +123,8 @@
                 if (dist <= 0) {
                     window.location.replace("summary.php");
                 }
-            }, 1000);
-                
-            
+            }, 1000);*/
         </script>
-        <script>
-            function redir() {
-                window.location.replace("summary.php");
-            }
-            window.addEventListener("blur", redir);
-        </script>
+        <?php echo $script; ?>
     </body>
 </html>

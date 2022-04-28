@@ -8,50 +8,55 @@
 
     $notice = $notice_class = "";
 
-    if ($_SERVER['REQUEST_METHOD'] == "POST") {
-        if (isset($_POST['get'])) {
-            $_SESSION['module'] = argStrip($_POST['m']);
-            $_SESSION['test'] = argStrip($_POST['t']);
-            $tid = $_SESSION['test'];
-            
-            $sql = mysqli_prepare($link, "SELECT id, points, quest_type, ans FROM question WHERE test_id=?");
-            mysqli_stmt_bind_param($sql, 'i', $tid);
-            mysqli_stmt_execute($sql);
-            $result = mysqli_stmt_get_result($sql);
-            
-            $i = 0;
-            $j = 0;
-            $arr;
-            while ($row = mysqli_fetch_assoc($result)) {
-                $arr[$i] = $row['id'];
-                $i ++;
-                if ($row['quest_type'] == 2) {
-                    $num = strlen($row['ans']);
+    if (isset($_GET['t'])) {
+        $_SESSION['test'] = argStrip($_GET['t']);
+        $tid = $_SESSION['test'];
 
-                    $j += ($num * $row['points']);
-                } else {
-                    $j += $row['points'];
-                }
+        $sql = mysqli_prepare($link, "SELECT module.name AS mn, test.name AS tn FROM module, test WHERE module.id=test.module_id AND test.id=?");
+        mysqli_stmt_bind_param($sql, 'i', $tid);
+        mysqli_stmt_execute($sql);
+        $res = mysqli_stmt_get_result($sql);
+        $tname = mysqli_fetch_assoc($res);
+        
+        $sql = mysqli_prepare($link, "SELECT id, points, quest_type, ans FROM question WHERE test_id=?");
+        mysqli_stmt_bind_param($sql, 'i', $tid);
+        mysqli_stmt_execute($sql);
+        $result = mysqli_stmt_get_result($sql);
+        
+        $i = 0;
+        $j = 0;
+        $arr;
+        while ($row = mysqli_fetch_assoc($result)) {
+            $arr[$i] = $row['id'];
+            $i ++;
+            if ($row['quest_type'] == 2) {
+                $num = strlen($row['ans']);
+
+                $j += ($num * $row['points']);
+            } else {
+                $j += $row['points'];
             }
-            $_SESSION['quest_num'] = $i;
-            $_SESSION['maxpoints'] = $j;
-            
-            $_SESSION['quest_arr'] = $arr;
-            mysqli_stmt_close($sql);
+        }
+        $_SESSION['quest_num'] = $i;
+        $_SESSION['maxpoints'] = $j;
 
-            $_SESSION['ans'] = array();
-            header("location: ${_SERVER['PHP_SELF']}");
-            exit;
-        } else if(isset($_POST['start'])) {
+        $_SESSION['quest_arr'] = $arr;
+        mysqli_stmt_close($sql);
+
+        $_SESSION['ans'] = array();
+    }
+    
+    if ($_SERVER['REQUEST_METHOD'] == "POST") {
+        if(isset($_POST['start'])) {
             $code = argStrip($_POST['s']);
 
-            $sql = mysqli_prepare($link, "SELECT can_take, time FROM test WHERE id=?");
+            $sql = mysqli_prepare($link, "SELECT can_take, vert, time FROM test WHERE id=?");
             mysqli_stmt_bind_param($sql, 'i', $_SESSION['test']);
             mysqli_stmt_execute($sql);
             $result = mysqli_stmt_get_result($sql);
-            $res = mysqli_fetch_assoc($result);
+            $dt = mysqli_fetch_assoc($result);
 
-            if ($res['can_take'] == 0) {
+            if ($dt['can_take'] == 0) {
 
                 if (!empty($code)) {
                     $sql = mysqli_prepare($link, "SELECT id, can_laa, is_open, closed FROM session WHERE code=?");
@@ -69,13 +74,15 @@
                             $notice = "e-Sesja się jeszcze nie rozpoczęła!";
                         } else {
                             $_SESSION['laa'] = $data['can_laa'];
+                            $_SESSION['vert'] = $dt['vert'];
+
                             $_SESSION['sid'] = $data['id'];
     
                             $_SESSION['name'] = argStrip($_POST['n']);
                             $_SESSION['lastname'] = argStrip($_POST['l']);
                             $_SESSION['class'] = argStrip($_POST['c']);
     
-                            $_SESSION['finish_time'] = time() + ($_SESSION['quest_num'] * $res['time']);
+                            $_SESSION['finish_time'] = time() + ($_SESSION['quest_num'] * $dt['time']);
     
                             $_SESSION['ans'] = array();
                             header("location: question.php");
@@ -101,13 +108,15 @@
                         $notice = "e-Sesja się jeszcze nie rozpoczęła!";
                     } else {
                         $_SESSION['laa'] = $data['can_laa'];
+                        $_SESSION['vert'] = $dt['vert'];
+
                         $_SESSION['sid'] = $data['id'];
 
                         $_SESSION['name'] = argStrip($_POST['n']);
                         $_SESSION['lastname'] = argStrip($_POST['l']);
                         $_SESSION['class'] = argStrip($_POST['c']);
 
-                        $_SESSION['finish_time'] = time() + ($_SESSION['quest_num'] * $res['time']);
+                        $_SESSION['finish_time'] = time() + ($_SESSION['quest_num'] * $dt['time']);
 
                         $_SESSION['ans'] = array();
                         header("location: question.php");
@@ -115,11 +124,13 @@
                     }
                 }
             } else {
+                $_SESSION['vert'] = $dt['vert'];
+
                 $_SESSION['name'] = argStrip($_POST['n']);
                 $_SESSION['lastname'] = argStrip($_POST['l']);
                 $_SESSION['class'] = argStrip($_POST['c']);
     
-                $_SESSION['finish_time'] = time() + ($_SESSION['quest_num'] * $res['time']);
+                $_SESSION['finish_time'] = time() + ($_SESSION['quest_num'] * $dt['time']);
     
                 $_SESSION['ans'] = array();
                 header("location: question.php");
@@ -170,10 +181,11 @@
         </nav>
         <div class="wrapper">
             <div class="container">
+                <h3 class="mt-5 mb-3"><?php echo "${tname['mn']} - ${tname['tn']}";?></h3>
+                <p><?php echo "${_SESSION['quest_num']} pytań, ${_SESSION['maxpoints']} punktów"; ?></p>
                 <form method="post">
-                    <h3 class="my-5">Zasady:</h3>
+                    <h4>Zasady:</h4>
                     <ul id="rules" class="alert alert-info">
-                        <li>Na odpowiedź na każde pytanie masz 30 sekund.</li>
                         <li>Jeżeli spróbujesz cofnąć się do poprzedniej strony, system przekieruje cię do podsumowania.</li>
                         <li>Jeżeli skończy ci się czas, odpowiedź na ostatnie pytanie nie zostanie zapisana, a system przekieruje cię do podsumowania.</li>
                     </ul>

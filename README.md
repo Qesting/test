@@ -6,11 +6,9 @@ Niestety w dokumentacji pominięte zostały jedna lub dwie wersje (przy takiej i
 ## Aktualna wersja: 1.0
 
 Nadchodzące zmiany:
-- podglądanie wyników testów
-- testy scrollowane
+- podglądanie wyników testów 
+- ~~testy scrollowane~~ **--zrobione na dzień 28.04.2022**
 - przewodnik po funkcjach
-
-*Nie pytajcie czemu jeżyki.*
 
 
 # CHANGELOG

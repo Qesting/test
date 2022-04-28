@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS test (
 	time int DEFAULT 30,
 	can_take int DEFAULT 1,
 	can_laa int DEFAULT 0,
+	vert int DEFAULT 0,
 	part int DEFAULT 0,
 
 	FOREIGN KEY (module_id) REFERENCES module(id)

@@ -78,11 +78,7 @@
                     while ($row2 = mysqli_fetch_assoc($res2)) {
                         echo "<li class=\"card card-body mb-2\">
                         <p>${row2['name']}</p>
-                            <form method=\"post\" action=\"tests/start.php\">
-                                <input type=\"hidden\" name=\"t\" value=".$row2['id'].">
-                                <input type=\"hidden\" name=\"m\" value=".$row1['id'].">
-                                <input type=\"submit\" value=\"start\" name='get' class='btn btn-secondary btn-sm'>
-                            </form>
+                            <a href='tests/start.php?t=${row2['id']}' class='btn btn-secondary btn-sm'>Start</a>
                         </li>";
                     }
 

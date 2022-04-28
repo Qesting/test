@@ -12,33 +12,28 @@
     require_once("../../config.php");
 
     $id = $_SESSION['test_id'];
-    $cl = $ct = "";
+    $cl = $ct = $vert = "";
     
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST['save'])) {
             $name = argStrip($_POST['name']);
 
-            if (!empty($_POST['ct'])) {
-                $ct = argStrip($_POST['ct']);
-            } else {
-                $ct = 0;
-            }
-            if (!empty($_POST['cl'])) {
-                $cl = argStrip($_POST['cl']);
-            } else {
-                $cl = 0;
-            }
+            $ct = (!empty($_POST['ct'])) ? 1 : 0;
+            $cl = (!empty($_POST['cl'])) ? 1 : 0;
+            $vert = (!empty($_POST['vert'])) ? 1 : 0;
+
 
             $time = argStrip($_POST['time']);
 
-            $sql = mysqli_prepare($link, "UPDATE test SET name=?, can_take=?, can_laa=?, time=? WHERE id=?");
-            mysqli_stmt_bind_param($sql, 'siiii', $name, $ct, $cl, $time, $id);
+            $sql = mysqli_prepare($link, "UPDATE test SET name=?, can_take=?, can_laa=?, vert=?, time=? WHERE id=?");
+            mysqli_stmt_bind_param($sql, 'siiiii', $name, $ct, $cl, $vert, $time, $id);
             mysqli_stmt_execute($sql);
             header("location: ${_SERVER['PHP_SELF']}");
+            exit;
         }
     }
 
-    $sql = mysqli_prepare($link, "SELECT can_take, can_laa, time FROM test WHERE id=?");
+    $sql = mysqli_prepare($link, "SELECT can_take, can_laa, vert, time FROM test WHERE id=?");
     mysqli_stmt_bind_param($sql, 'i', $id);
     mysqli_stmt_execute($sql);
     $res = mysqli_stmt_get_result($sql);
@@ -49,6 +44,9 @@
     }
     if ($res['can_laa'] == 1) {
         $cl = "checked";
+    }
+    if ($res['vert'] == 1) {
+        $vert = "checked";
     }
 
     $time = $res['time'];
@@ -97,6 +95,10 @@
                     <div class="form-group">
                         <input name="ct" value="1" type="checkbox" id="ct" <?php echo $ct; ?> class="">
                         <label for="ct">Czy można podchodzić do testu poza sesjami?</label>
+                    </div>
+                    <div class="form-group">
+                        <input name="vert" value="1" type="checkbox" id="vert" <?php echo $vert; ?> class="">
+                        <label for="vert">Test przewijany?</label>
                     </div>
                     <div class="form-group">
                         <input name="cl" value="1" type="checkbox" id="cl" <?php echo $cl; ?> class="">

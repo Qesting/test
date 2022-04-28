@@ -26,10 +26,10 @@
 
         switch ($grade) {
             case 1:
-                $img = '<img class="rounded w" src="./../media/life.jpg">';
+                $img = '<img class="rounded w" src="media/life.jpg">';
                 break;
             case 6:
-                $img = '<img class="rounded w" src="./../media/science.jpg">';
+                $img = '<img class="rounded w" src="media/science.jpg">';
                 break;
         }
 

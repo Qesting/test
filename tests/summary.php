@@ -1,24 +1,25 @@
 <?php
     session_start();
 
-    ini_set('display_errors', 1);
+    /*ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
+    error_reporting(E_ALL);*/
 
     require_once("../config.php");
-    $maxpoints = $_SESSION['maxpoints'];
+    $maxpoints = (isset($_SESSION['maxpoints'])) ? $_SESSION['maxpoints'] : 1;
     $score_cal = review();
 
     $points = round((($score_cal/$maxpoints)*100), 0, PHP_ROUND_HALF_UP);
 
     require_once("grade.php");
     
-    $name = $_SESSION['name'].' '.$_SESSION['lastname'];
-    $class = $_SESSION['class'];
-    $test = $_SESSION['test'];
-
+    
     if(isset($_SESSION['sid'])) {
         $sid = $_SESSION['sid'];
+        $name = $_SESSION['name'].' '.$_SESSION['lastname'];
+        $class = $_SESSION['class'];
+        $test = $_SESSION['test'];
+        
         require_once("scoresave.php");
     }
 

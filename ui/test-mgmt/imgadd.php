@@ -22,7 +22,7 @@
         global $link;
         global $id;
 
-        $dir = "../../media/";
+        $dir = "../../usermedia/";
         $fup = $_FILES['img']['name'];
         $ext = pathinfo($fup, PATHINFO_EXTENSION);
     
