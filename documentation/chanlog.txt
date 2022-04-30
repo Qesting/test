@@ -1,0 +1,6 @@
+28/04/2022 -- commit 2f81e55c5c73aa4015dc136a1b9b1eb6ef01f287 
+- przemianowanie /media na /usermedia
+- dodanie kolumny test.vert (INT DEFAULT 0) do bazy
+- zmiana połączenia index -> start na GET
+- dodanie funkcji testów przewijanych
+- zmiana sposobu wyświetlania testów (/tests/js/questTab.js)

@@ -39,7 +39,7 @@
     <body>
         <nav class="navbar navbar-expand navbar-dark bg-primary">
             <div class="container-fluid">
-            <a class="navbar-brand"><b>T</b>ESTOPOL</a>
+                <a class="navbar-brand"><b>T</b>ESTOPOL</a>
                 <div class="collapse navbar-collapse">
                     <div class="navbar-nav ms-auto">
                         <a class="nav-item nav-link active" href='ui/login.php'>Zaloguj się</a>
@@ -47,8 +47,8 @@
                         
                     </div>
                 </div>
-                 <div class="text-right pl-3"><?php require_once("losu2.php"); ?></div>
-             </div>
+                <div class="text-right pl-3"><?php require_once("losu2.php"); ?></div>
+            </div>
             </div>
         </nav>
         <div class="wrapper">

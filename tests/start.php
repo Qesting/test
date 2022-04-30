@@ -142,7 +142,7 @@
     showNot();
 
 
-    if (isset($_SESSION['question']) && $_SESSION['question'] > 0) {
+    if (isset($_SESSION['question'])) {
         header('location:summary.php');
         exit;
     }

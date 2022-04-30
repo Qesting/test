@@ -98,6 +98,7 @@
                                 "type" => $type,
                                 "points" => $points
                             );
+                            $sub = ($iter == $qcount - 1) ? "<input type='submit' class='btn btn-primary mt-3' value='Zatwierdź'>" : "";
                         }
                     ?>
                     <?php echo $prevNext; ?>
@@ -109,7 +110,7 @@
             </div>
         </div>
         <script>
-            /*let finish = new Date(<?php echo $_SESSION['finish_time']; ?>);
+            let finish = new Date(<?php echo $_SESSION['finish_time']; ?>);
             finish = Math.round(finish.getTime());
             let x = setInterval(function() {
                 let now = Math.round(new Date().getTime() / 1000);
@@ -118,12 +119,12 @@
                 let minutes = Math.floor((dist % (60 * 60)) / 60);
                 let seconds = Math.floor(dist % 60);
 
-                document.getElementById("timer").innerHTML = "Pozostały czas: " + minutes + " minut, " + seconds + " sekund.";
+                document.getElementById("timer").textContent = "Pozostały czas: " + minutes + " minut, " + seconds + " sekund.";
 
                 if (dist <= 0) {
                     window.location.replace("summary.php");
                 }
-            }, 1000);*/
+            }, 1000);
         </script>
         <?php echo $script; ?>
     </body>

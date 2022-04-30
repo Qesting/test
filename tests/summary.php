@@ -1,6 +1,11 @@
 <?php
     session_start();
 
+    if (!isset($_SESSION['question'])) {
+        header("location: ../index.php");
+        exit;
+    }
+
     /*ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);*/
@@ -73,17 +78,9 @@
                     show_grade();
                 ?>
                 <div class="form-group mt-3">
-                <a class="btn btn-primary" href='../index.php'>Powrót do strony głównej</a>
+                <a class="btn btn-primary" href='unset.php?index=1'>Powrót do strony głównej</a>
                 </div>
             </div>
         </div>
     </body>
 </html>
-
-<?php
-    setcookie (session_id(), "", time() - 3600);
-    $_SESSION = array();
-    session_destroy();
-    session_write_close();
-?>
-

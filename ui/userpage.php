@@ -1,9 +1,9 @@
 <?php
     session_start();
 
-    /*ini_set('display_errors', 1);
+    ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);*/
+    error_reporting(E_ALL);
 
     if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
         header("location: login.php");
@@ -27,6 +27,15 @@
 
     mysqli_stmt_close($sql1);
 
+    if ($_SESSION['priv'] == 2) {
+        $sqla = mysqli_query($link, "SELECT COUNT(id) FROM users WHERE priv='0'");
+        $result = mysqli_fetch_array($sqla);
+        $badge = ($result[0] > 0) ? " <span class='badge badge-light'>${result[0]}</span>" : "";
+        $btn = "<div class=\"form-group\"><button onclick=\"window.location.href='users/users.php'\" class=\"btn btn-primary\"><span class=\"bi-file-person\"></span> Zarządzaj użytkownikami${badge}</button></div>";
+    } else {
+        $badge = $btn = "";
+    }
+
     mysqli_close($link);
 ?>
 
@@ -42,12 +51,21 @@
         </style>
     </head>
     <body>
+        <nav class="navbar navbar-expand navbar-dark bg-primary">
+            <div class="container-fluid">
+            <a class="navbar-brand"><b>T</b>ESTOPOL</a>
+                <div class="collapse navbar-collapse">
+                    <div class="navbar-nav ms-auto">
+                        <a class="nav-item nav-link active" href='../index.php'>Powrót do strony głównej</a>                        
+                    </div>
+                </div>
+             </div>
+            </div>
+        </nav>
         <div class="wrapper">
             <h1 class="my-5">Witaj, <b><?php echo htmlspecialchars($_SESSION["username"]); ?></b></h1>
-            <?php
-                    if ($_SESSION['priv'] == 2) {
-                        echo "<div class=\"form-group\"><button onclick=\"window.location.href='users/users.php'\" class=\"btn btn-primary\"><span class=\"bi-file-person\"></span> Zarządzaj użytkownikami</button></div>";
-                    }
+                <?php
+                    echo $btn;
                 ?>
             <div class="form-group">
                 <button onclick="window.location.href='reset-password.php'" class="btn btn-warning"><span class="bi-key"></span> Zresetuj hasło</button>

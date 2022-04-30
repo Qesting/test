@@ -26,13 +26,12 @@ document.getElementById("next").addEventListener("click", function() {
     newTab = atab + 1;
     if (newTab <= num) {
         p.classList.remove("alert", "alert-warning");
-        p.innerText = "";
-
+        p.textContent = "";
+        
         document.getElementById(atab).classList.add("hidden");
         document.getElementById(newTab).classList.remove("hidden");
-
+        
         atab = newTab;
-
         if (atab == num && grp.childElementCount == 0) {
             const inp = document.createElement("input");
             let btn = grp.appendChild(inp);
@@ -41,7 +40,7 @@ document.getElementById("next").addEventListener("click", function() {
             btn.type = "submit";
         }
     } else {
-        p.innerText = "To już ostatnie pytanie!";
+        p.textContent = "To już ostatnie pytanie!";
         p.classList.add("alert", "alert-warning");
     }
 })
@@ -50,14 +49,14 @@ document.getElementById("prev").addEventListener("click", function() {
     newTab = atab - 1;
     if (newTab >= 0) {
         p.classList.remove("alert", "alert-warning");
-        p.innerText = "";
+        p.textContent = "";
 
         document.getElementById(atab).classList.add("hidden");
         document.getElementById(newTab).classList.remove("hidden");
 
         atab = newTab;
     } else {
-        p.innerText = "To jest pierwsze pytanie!";
+        p.textContent = "To jest pierwsze pytanie!";
         p.classList.add("alert", "alert-warning");
     }
 })
