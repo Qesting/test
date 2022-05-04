@@ -1,23 +1,38 @@
-# testopol
-Projekt otrzymał nazwę "TESTOPOL" na około 2 dni przed przejściem na v1.0
+# TESTOPOL
 
-Niestety w dokumentacji pominięte zostały jedna lub dwie wersje (przy takiej ilości zmian zapomnieliśmy o ich numeracji).
+**„TESTOPOL”** to hobbystycznie tworzona platforma do rozwiązywania testów zbudowana na języku PHP, bazie danych MySQL oraz frontendowych bibliotekach Bootstrap 4 i jQuery 3.6.
 
-## Aktualna wersja: 1.0
+Platforma posiada:
+- testy w wersji przewijanej i po jednym pytaniu;
+- 3 rodzaje pytań:
+    - zamknięte jednokrotnego wyboru
+    - zamknięte wielokrotnego wyboru
+    - otwarte (tekstowe)
+- ręczną weryfikację użytkowników przez administratora - nikt niepowołany nie dostanie się do bazy testów;
+- mechanizm sesji
+    - możliwość zabezpieczenia testu przed dostępem poza sesją
+    - zapis wyników do bazy
+    - podgląd zapisanych wyników na specjalnym ekranie wpisów
+    - automatyczne ocenianie według standardowej skali ocen
+    - sześciocyfrowe kody sesji - milion możliwych kombinacji
+- w pełni działający interfejs użytkownika do zarządzania testami i sesjami
+- możliwość nadania prawa do przejrzenia odpowiedzi po zakończeniu testu 
+
+## Aktualna wersja: 1.1
 
 Nadchodzące zmiany:
-- podglądanie wyników testów 
-- ~~testy scrollowane~~ **--zrobione na dzień 28.04.2022**
 - przewodnik po funkcjach
+- dokumenty testopol
+- tryb ciemny
+- przepisanie interefejsu dodawania pytań na prostszą wersję, opartą na JS 
 
+## Opis techniczny
 
-# CHANGELOG
-
-## ---=== REL v1.0 ===---
-- Dodano opcję wyboru czasu per pytanie - od 30 do 60 sekund
-- Zmodyfikowano fragment skryptu liczący wyniki - teraz nie uznaje jako punktu NULL==NULL
-- Zmieniono sposób zapytań do bazy z mysqli proceduralnego z wpisywaniem zmiennych na mysqli proceduralne z przygotowanymi zapytaniami
-- Zmieniono sposób zapytań POST - weryfikacja odbywa się w ramach tego samego pliku, który wysyła dane
-- Dodano oceny
-- Dodano obrazy dla ocen cel i ndt
-- **Zmieniono interfejs dodawania pytań/odpowiedzi**
+Platforma testopol zbudowana jest z użyciem następujących narzędzi/języków/programów:
+- PHP w wersji 7.4
+- MySQL w wersji 8.0
+- HTML w wersji 5
+- CSS w wersji 3
+- JavaScript w wersji ES6
+- Bootstrap w wersji 4 **--biblioteka**
+- jQuery w wersji 3.6 **--biblioteka**

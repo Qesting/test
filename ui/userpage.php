@@ -45,7 +45,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Strona użytkownika</title>
-        <link rel="stylesheet" href="../style/main.css">
+        <link rel="stylesheet" href="/style/main.css">
         <style>
             body{ font: 14px sans-serif; text-align: center; }
         </style>
@@ -56,7 +56,7 @@
             <a class="navbar-brand"><b>T</b>ESTOPOL</a>
                 <div class="collapse navbar-collapse">
                     <div class="navbar-nav ms-auto">
-                        <a class="nav-item nav-link active" href='../index.php'>Powrót do strony głównej</a>                        
+                        <a class="nav-item nav-link active" href='/index.php'>Powrót do strony głównej</a>                        
                     </div>
                 </div>
              </div>
@@ -74,7 +74,7 @@
             <div class="row">
                 <div class="col-sm-6">
                     <div class="card card-body">
-                        <button onclick="window.location.href='./test-mgmt/mod.php'" class="btn btn-primary"><span class="bi-card-text"></span> Zarządzaj testami</button>
+                        <button onclick="window.location.href='test-mgmt/mod.php'" class="btn btn-primary"><span class="bi-card-text"></span> Zarządzaj testami</button>
                         <?php
                             if (mysqli_num_rows($res) == 0) {
                                 echo '<h5 class="my-5">Wygląda na to, że nie masz jeszcze żadnych testów. Stwórz jakiś!</h5>';
@@ -100,7 +100,7 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="card card-body">
-                        <button onclick="window.location.href='./session/sessions.php'" class="btn btn-primary"><span class="bi-calendar-week"></span> Zarządzaj sesjami</button>
+                        <button onclick="window.location.href='session/sessions.php'" class="btn btn-primary"><span class="bi-calendar-week"></span> Zarządzaj sesjami</button>
                         <?php
                             if (mysqli_num_rows($res1) == 0) {
                                 echo '<h5 class="my-5">Wygląda na to, że nie masz jeszcze żadnych sesji. Stwórz jakąś!</h5>';

@@ -4,3 +4,9 @@
 - zmiana połączenia index -> start na GET
 - dodanie funkcji testów przewijanych
 - zmiana sposobu wyświetlania testów (/tests/js/questTab.js)
+
+30/04/2022 -- commit d1315df3c4d6b9fc9b608e776a483e987ec71574
+- zmiana używanej w skryptach właściwości DOM innerText na textContent
+- dodanie informacji dla administratorów o liczbie niezweryfikowanych użytkowników
+- zmiana metody usuwania danych sesji po zakończeniu testu - session_destroy() -> unset.php
+- rozwiązanie problemu z testami obsługowanymi przez questTabs.js (problem testu z jednym pytaniem)

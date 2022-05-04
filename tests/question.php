@@ -47,8 +47,8 @@
             </div>";
 
     $prevNext = ($_SESSION['vert'] == 0) ? $btn : "";
-    $script = ($_SESSION['vert'] == 0) ? "<script src='js/questTabs.js'></script>" : "";
-    $sub = ($_SESSION['vert'] == 1) ? "<input type='submit' class='btn btn-primary mt-3' value='Zatwierdź'>" : "";
+    $script = ($_SESSION['vert'] == 0) ? "<script src='js/questTabs.js'></script>" : "<script src='js/layout.js'></script>";
+    $sub = ($_SESSION['vert'] != 0) ? "<input type='submit' class='btn btn-primary mt-3' value='Zatwierdź'>" : "";
 
     ?>
 
@@ -65,7 +65,9 @@
             .hidden {
                 display: none;
             }
-            </style>
+        </style>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     </head>
     <body>
         <nav class="navbar navbar-expand navbar-dark bg-primary">
@@ -79,7 +81,7 @@
             </div>
         </nav>
         <div class="wrapper">
-            <div class="container">
+            <article class="container">
                 <form method='post' id='quest'>
                     <?php
                         $corr = $type = $points = 0;
@@ -89,25 +91,25 @@
                             
                             $qid = $rand[$iter];
                             
-                            echo "<div class='card mt-5' id='${iter}'>"; 
+                            echo "<section class='card mt-5' id='q${iter}'>"; 
                             require("question_sel.php");
-                            echo "</div>";
+                            echo "</section>";
                             
                             $_SESSION['ans'][$iter] = array(
                                 "correct" => $corr,
                                 "type" => $type,
                                 "points" => $points
                             );
-                            $sub = ($iter == $qcount - 1) ? "<input type='submit' class='btn btn-primary mt-3' value='Zatwierdź'>" : "";
                         }
+                        $sub = ($iter == $qcount - 1) ? "<input type='submit' class='btn btn-primary mt-3' value='Zatwierdź'>" : $sub;
                     ?>
                     <?php echo $prevNext; ?>
-                    <div class='form-group' id='sub-grp' style="text-align: center;">
+                    <section class='form-group' id='sub-grp' style="text-align: center;">
                         <?php echo $sub; ?>
-                    </div>
+                    </section>
                 </form>
                 <p id="alert"></p>
-            </div>
+            </article>
         </div>
         <script>
             let finish = new Date(<?php echo $_SESSION['finish_time']; ?>);

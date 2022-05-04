@@ -1,22 +1,29 @@
-<div class='card-header'><h2>Pytanie <?php echo $qnum; ?>:</h2></div>
+<?php 
+    $sql = mysqli_prepare($link, "SELECT points, quest_type, img_path, ans FROM question WHERE id=?");
+    mysqli_stmt_bind_param($sql, 'i', $qid);
+    mysqli_stmt_execute($sql);
+    $result = mysqli_stmt_get_result($sql);
+    $data = mysqli_fetch_assoc($result);
+    
+    $points = $data['points'];
+    
+    $sql = mysqli_prepare($link, "SELECT COUNT(id) AS num FROM answer WHERE quest_id=?");
+    mysqli_stmt_bind_param($sql, 'i', $qid);
+    mysqli_stmt_execute($sql);
+    $res = mysqli_stmt_get_result($sql);
+    $a = mysqli_fetch_assoc($res);
+
+    $point_show = ($data['quest_type'] == 2) ? $points * strlen($data['ans']) : "$points";
+?>
+
+<div class='card-header'>
+    <h2>Pytanie <?php echo $qnum; ?>:</h2>
+    <p><i><b><?php echo $point_show; ?></b> punktów</i></p>
+</div>
 <div class='card-body px-5'>
     <div class='form-group'>
 
         <?php
-
-        $sql = mysqli_prepare($link, "SELECT points, quest_type, img_path FROM question WHERE id=?");
-        mysqli_stmt_bind_param($sql, 'i', $qid);
-        mysqli_stmt_execute($sql);
-        $result = mysqli_stmt_get_result($sql);
-        $data = mysqli_fetch_assoc($result);
-        
-        $points = $data['points'];
-        
-        $sql = mysqli_prepare($link, "SELECT COUNT(id) AS num FROM answer WHERE quest_id=?");
-        mysqli_stmt_bind_param($sql, 'i', $qid);
-        mysqli_stmt_execute($sql);
-        $res = mysqli_stmt_get_result($sql);
-        $a = mysqli_fetch_assoc($res);
         
         $type = $data['quest_type'];
         

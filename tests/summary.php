@@ -28,6 +28,8 @@
         require_once("scoresave.php");
     }
 
+    $btn = ($_SESSION['laa'] == 1) ? "<a class='btn btn-secondary' href='laa.php'>Zobacz odpowiedzi</a>" : "";
+
 ?>
 
 <!DOCTYPE html>
@@ -78,7 +80,8 @@
                     show_grade();
                 ?>
                 <div class="form-group mt-3">
-                <a class="btn btn-primary" href='unset.php?index=1'>Powrót do strony głównej</a>
+                    <a class="btn btn-primary" href='unset.php?index=1'>Powrót do strony głównej</a>
+                    <?php echo $btn ?>
                 </div>
             </div>
         </div>

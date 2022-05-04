@@ -131,6 +131,15 @@
                 $_SESSION['class'] = argStrip($_POST['c']);
     
                 $_SESSION['finish_time'] = time() + ($_SESSION['quest_num'] * $dt['time']);
+
+                $sql = mysqli_prepare($link, "SELECT can_laa FROM test WHERE id=?");
+                mysqli_stmt_bind_param($sql, 'i', $_SESSION['test']);
+                mysqli_stmt_execute($sql);
+                $res = mysqli_stmt_get_result($sql);
+                mysqli_stmt_close($sql);
+                $data = mysqli_fetch_assoc($res);
+
+                $_SESSION['laa'] = $data['can_laa'];
     
                 $_SESSION['ans'] = array();
                 header("location: question.php");

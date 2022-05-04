@@ -6,7 +6,7 @@
     }
     require_once("../../config.php");
 
-    $id = $_SESSION['id'];
+    $id = $_SESSION['test_id'];
 
     $sql = mysqli_prepare($link, "DELETE FROM test WHERE id=?");
     mysqli_stmt_bind_param($sql, 'i', $id);

@@ -42,7 +42,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Sesje</title>
+        <title>Zarządzanie użytkownikami</title>
         <link rel="stylesheet" href="../../style/main.css">
         <style>
             body{ font: 14px sans-serif; text-align: center;}
@@ -55,7 +55,7 @@
                 <div class="collapse navbar-collapse">
                     <div class="navbar-nav ms-auto">
                         <a class="nav-item nav-link active" href='../userpage.php'>Powrót do strony użytkownika</a>
-                        <a class="nav-item nav-link active" href='../../index.php'>Powrót do strony głównej</a>
+                        <a class="nav-item nav-link active" href='/index.php'>Powrót do strony głównej</a>
                     </div>
                 </div>
             </div>
@@ -91,10 +91,11 @@
                                 }
 
 
-                                echo '<tr><form action="usermod.php" method="post">
+                                echo '<tr>
                                 <td>'.$row['username'].'</td>
                                 <td>'.$row['created_at'].'</td>
                                 <td>
+                                <form method="post">
                                 <input type="hidden" name="uid" value="'.$row['id'].'">
                                 <div class="btn-group">
                                 <select name="new_perm" class="form-control">
@@ -103,8 +104,8 @@
                                 <option value="2" '.$sel3.'>Administrator</option>
                                 </select>
                                 <input type="submit" value="Zatwierdź" class="btn btn-outline-primary btn-sm">
-                                </div></td>
-                                </form></tr>';
+                                </div></form></td>
+                                </tr>';
                             }
                         ?>
                         </tbody>
