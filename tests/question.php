@@ -121,10 +121,10 @@
                 let minutes = Math.floor((dist % (60 * 60)) / 60);
                 let seconds = Math.floor(dist % 60);
 
-                document.getElementById("timer").textContent = "Pozostały czas: " + minutes + " minut, " + seconds + " sekund.";
+                $('#timer').text("Pozostały czas: " + minutes + " minut, " + seconds + " sekund.");
 
                 if (dist <= 0) {
-                    window.location.replace("summary.php");
+                    $('#quest').submit();
                 }
             }, 1000);
         </script>

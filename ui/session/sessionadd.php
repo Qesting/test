@@ -10,6 +10,8 @@
     $code = "";
     $owner = $_SESSION['id'];
 
+    $notice = $notice_class = "";
+
     if ($_SERVER['REQUEST_METHOD'] == "POST") {
         if ($_POST['test'] != 0) {
             $exp = "/[0-9]{6}/";
@@ -54,6 +56,8 @@
 
     $sql = "SELECT test.id, module.name, test.name FROM test, module WHERE module.id=test.module_id";
     $res = mysqli_query($link, $sql);
+
+    showNot();
 ?>
 
 <!DOCTYPE html>

@@ -10,6 +10,15 @@
         require_once("tests/unset.php");
     }
 
+    if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['test'])) {
+
+        $testArgs = "t=${_GET['test']}";
+        $testArgs .= (isset($_GET['s'])) ? "&s=${_GET['s']}" : "";
+        header("location: ./tests/start.php?${testArgs}");
+        exit;
+
+    }
+
     $link2 = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
     $result = $link2->query("SELECT * FROM quotes order by RAND() limit 1");

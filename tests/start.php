@@ -7,8 +7,17 @@
     error_reporting(E_ALL);
 
     $notice = $notice_class = "";
+    $sCode = "";
+
+    $tname = array(
+        'tn' => "",
+        'mn' => ""
+    );
 
     if (isset($_GET['t'])) {
+
+        $sCode = (isset($_GET['s'])) ? $_GET['s'] : $sCode;
+
         $_SESSION['test'] = argStrip($_GET['t']);
         $tid = $_SESSION['test'];
 
@@ -44,9 +53,8 @@
         mysqli_stmt_close($sql);
 
         $_SESSION['ans'] = array();
-    }
-    
-    if ($_SERVER['REQUEST_METHOD'] == "POST") {
+
+    } else if ($_SERVER['REQUEST_METHOD'] == "POST") {
         if(isset($_POST['start'])) {
             $code = argStrip($_POST['s']);
 
@@ -66,15 +74,12 @@
         
                     if (mysqli_num_rows($res1) == 0) {
                         $notice = "e-Taki kod sesji nie istnieje!";
-                        unset($_SESSION['question']);
                     } else {
                         $data = mysqli_fetch_assoc($res1);
                         if ($data['is_open'] == 0 && !empty($data['closed'])) {
                             $notice = "e-Sesja się już zakończyła!";
-                            unset($_SESSION['question']);
                         } else if ($data['is_open'] == 0) {
                             $notice = "e-Sesja się jeszcze nie rozpoczęła!";
-                            unset($_SESSION['question']);
                         } else {
                             $_SESSION['laa'] = $data['can_laa'];
                             $_SESSION['vert'] = $dt['vert'];
@@ -88,13 +93,15 @@
                             $_SESSION['finish_time'] = time() + ($_SESSION['quest_num'] * $dt['time']);
     
                             $_SESSION['ans'] = array();
+
+                            $_SESSION['question'] = 0;
+
                             header("location: question.php");
                             exit;
                         }
                     }
                 } else {
                     $notice = "e-Ten test można rozwiązać tylko w ramach sesji!";
-                    unset($_SESSION['question']);
                 }  
             } else if (!empty($code)) {
                 $sql = mysqli_prepare($link, "SELECT id, can_laa, is_open, closed FROM session WHERE code=?");
@@ -104,15 +111,12 @@
 
                 if (mysqli_num_rows($result) == 0) {
                     $notice = "e-Taki kod sesji nie istnieje!";
-                    unset($_SESSION['question']);
                 } else {
                     $data = mysqli_fetch_assoc($result);
                     if ($data['is_open'] == 0 && !empty($data['closed'])) {
                         $notice = "e-Sesja się już zakończyła!";
-                        unset($_SESSION['question']);
                     } else if ($data['is_open'] == 0) {
                         $notice = "e-Sesja się jeszcze nie rozpoczęła!";
-                        unset($_SESSION['question']);
                     } else {
                         $_SESSION['laa'] = $data['can_laa'];
                         $_SESSION['vert'] = $dt['vert'];
@@ -126,6 +130,9 @@
                         $_SESSION['finish_time'] = time() + ($_SESSION['quest_num'] * $dt['time']);
 
                         $_SESSION['ans'] = array();
+
+                        $_SESSION['question'] = 0;
+
                         header("location: question.php");
                         exit;
                     }
@@ -149,6 +156,9 @@
                 $_SESSION['laa'] = $data['can_laa'];
     
                 $_SESSION['ans'] = array();
+
+                $_SESSION['question'] = 0;
+
                 header("location: question.php");
                 exit;
             }
@@ -162,8 +172,6 @@
         header('location:summary.php');
         exit;
     }
-
-    $_SESSION['question'] = 0;
 
     mysqli_close($link)
 
@@ -203,7 +211,10 @@
                     <h4>Zasady:</h4>
                     <ul id="rules" class="alert alert-info">
                         <li>Jeżeli spróbujesz cofnąć się do poprzedniej strony, system przekieruje cię do podsumowania.</li>
-                        <li>Jeżeli skończy ci się czas, odpowiedź na ostatnie pytanie nie zostanie zapisana, a system przekieruje cię do podsumowania.</li>
+                        <li>Jeżeli skończy ci się czas, system przekieruje również cię do podsumowania.</li>
+                        <li>Przy każdym pytaniu widoczna jest ilość punktów, które jest ono warte.</li>
+                        <li>Wartość pytania wielokrotnego wyboru to stawka punktowa * ilość odpowiedzi.</li>
+                        <li>W pytaniach wielokrotnego wyboru punkty odejmowane są za udzielenie błędnej (również nadmiarowej) odpowiedzi, ale nie mogą zejść poniżej 0.</li>
                     </ul>
                     <div class="form-group">
                         <label for="n" class="form-label">Imię</label>
@@ -219,7 +230,7 @@
                     </div>
                     <div class="form-group">
                         <label for="s" class="form-label">Kod sesji</label>
-                        <input type="text" name="s" id="s" placeholder="Kod sesji" class="form-control">
+                        <?php echo "<input type='text' name='s' id='s' placeholder='Kod sesji' class='form-control' value='${sCode}'>" ?>
                     </div>
                     <div class="form-group">
                         <input type="submit" name="start" class="btn btn-primary" value="Zatwierdź">
