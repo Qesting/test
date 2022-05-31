@@ -1,20 +1,20 @@
 <?php
+    session_start();
     require_once('config.php');
 
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
 
-    /*$sql = mysqli_prepare($link, $query);
-    mysqli_stmt_bind_param($sql, 'iii', $module, $test, $question);
+    if (isset($_SESSION['question'])) {
+        require_once("tests/unset.php");
+    }
 
-    $module = $_SESSION['module'];
-    $test = $_SESSION['test'];
-    $question = $_SESSION['question'];
+    $link2 = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
-    mysqli_stmt_execute($sql);
-    $result = mysqli_stmt_get_result($sql);
-    $data = mysqli_fetch_assoc($result);
-    echo $data['content'];*/
-
-
+    $result = $link2->query("SELECT * FROM quotes order by RAND() limit 1");
+    $res = $result->fetch_array();
+    $q = $res[1];
 ?>
 
 <!DOCTYPE html>
@@ -42,12 +42,18 @@
                 <a class="navbar-brand"><b>T</b>ESTOPOL</a>
                 <div class="collapse navbar-collapse">
                     <div class="navbar-nav ms-auto">
-                        <a class="nav-item nav-link active" href='ui/login.php'>Zaloguj się</a>
-                        <a class="nav-item nav-link active" href='ui/register.php'>Zarejestruj się</a>
-                        
+                        <?php
+                            if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+                                echo "<a class='nav-item nav-link active' href='ui/login.php'>Zaloguj się</a>
+                                <a class='nav-item nav-link active' href='ui/register.php'>Zarejestruj się</a>";
+                            } else {
+                                echo "<span class='nav-item nav-link active'>Witaj, <b>${_SESSION['username']}</b></span>
+                                <a class='nav-item nav-link active' href='ui/userpage.php'><u>Strona użytkownika</u></u></a>";
+                            }
+                        ?>
                     </div>
                 </div>
-                <div class="text-right pl-3"><?php require_once("losu2.php"); ?></div>
+                <div class="text-right pl-3"></div>
             </div>
             </div>
         </nav>
@@ -57,8 +63,7 @@
             <p>Wybierz test</p>
             <div class="container-fluid">
             <?php
-                $sql1 = "SELECT * FROM module";
-                $res1 = mysqli_query($link, $sql1);
+                $res1 = $link2->query("SELECT * FROM module");
 
                 $sql = mysqli_prepare($link, "SELECT id, name FROM test WHERE module_id=?");
 
@@ -96,6 +101,26 @@
             </div>
             
         </div>
-         
+         <script>
+            var qv = false;
+            $(".navbar-brand").css('cursor', 'pointer');
+            $(".navbar-brand").click(function() {
+                if (!qv) {
+                    qv = true;
+                    $(".navbar-brand").css('cursor', 'auto');
+
+                    $("<div class='container'><p class='alert alert-info' id='q'></p></div>").insertBefore(".wrapper > :first-child");
+                
+                    $("#q").text('<?php echo $q; ?>');
+                    $("#q").delay(2000).fadeOut(400);
+                    
+                    setTimeout(function() {
+                        qv = false;
+                        $("#q").remove();
+                        $(".navbar-brand").css('cursor', 'pointer');
+                    }, 2500);
+                }
+            });
+         </script>
     </body>
 </html>

@@ -9,6 +9,10 @@ body > .wrapper {
     margin: 10px;
 }
 
+.op {
+    opacity: 0%;
+}
+
 img.w {
     width: 50vw;
     max-width: 450px;

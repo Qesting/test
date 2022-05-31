@@ -66,12 +66,15 @@
         
                     if (mysqli_num_rows($res1) == 0) {
                         $notice = "e-Taki kod sesji nie istnieje!";
+                        unset($_SESSION['question']);
                     } else {
                         $data = mysqli_fetch_assoc($res1);
                         if ($data['is_open'] == 0 && !empty($data['closed'])) {
                             $notice = "e-Sesja się już zakończyła!";
+                            unset($_SESSION['question']);
                         } else if ($data['is_open'] == 0) {
                             $notice = "e-Sesja się jeszcze nie rozpoczęła!";
+                            unset($_SESSION['question']);
                         } else {
                             $_SESSION['laa'] = $data['can_laa'];
                             $_SESSION['vert'] = $dt['vert'];
@@ -91,6 +94,7 @@
                     }
                 } else {
                     $notice = "e-Ten test można rozwiązać tylko w ramach sesji!";
+                    unset($_SESSION['question']);
                 }  
             } else if (!empty($code)) {
                 $sql = mysqli_prepare($link, "SELECT id, can_laa, is_open, closed FROM session WHERE code=?");
@@ -100,12 +104,15 @@
 
                 if (mysqli_num_rows($result) == 0) {
                     $notice = "e-Taki kod sesji nie istnieje!";
+                    unset($_SESSION['question']);
                 } else {
                     $data = mysqli_fetch_assoc($result);
                     if ($data['is_open'] == 0 && !empty($data['closed'])) {
                         $notice = "e-Sesja się już zakończyła!";
+                        unset($_SESSION['question']);
                     } else if ($data['is_open'] == 0) {
                         $notice = "e-Sesja się jeszcze nie rozpoczęła!";
+                        unset($_SESSION['question']);
                     } else {
                         $_SESSION['laa'] = $data['can_laa'];
                         $_SESSION['vert'] = $dt['vert'];
