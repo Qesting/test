@@ -54,7 +54,9 @@
 
         $_SESSION['ans'] = array();
 
-    } else if ($_SERVER['REQUEST_METHOD'] == "POST") {
+    } 
+
+    if ($_SERVER['REQUEST_METHOD'] == "POST") {
         if(isset($_POST['start'])) {
             $code = argStrip($_POST['s']);
 
