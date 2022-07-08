@@ -1,10 +1,11 @@
 <?php
     session_start();
-    require_once('config.php');
-
+    
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
+    
+    require_once('config/config.php');
 
     if (isset($_SESSION['question'])) {
         require_once("tests/unset.php");
@@ -19,7 +20,7 @@
 
     }
 
-    $link2 = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
+    $link2 = dbConnect();
 
     $result = $link2->query("SELECT * FROM quotes order by RAND() limit 1");
     $res = $result->fetch_array();

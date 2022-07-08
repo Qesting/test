@@ -10,7 +10,7 @@
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);*/
 
-    require_once("../config.php");
+    require_once('../config/config.php');
     $maxpoints = (isset($_SESSION['maxpoints'])) ? $_SESSION['maxpoints'] : 1;
     $score_cal = review();
 

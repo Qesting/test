@@ -9,7 +9,7 @@
         header("location: login.php");
         exit;
     }
-    require_once("../config.php");
+    require_once('../config/config.php');
 
     $owner = $_SESSION['id'];
 

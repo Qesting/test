@@ -2,6 +2,13 @@
 
     // funkcje używane w wielu miejscach
 
+    // czy tablica jest jednowymiarowa?
+    // działa lepiej niż / if (count($a) != count($a, 1)) /, ponieważ nie ignoruje pustych tablic potomnych (długość 0)
+    function isNotMultidimensional(array $array) {
+        foreach ($array as $element) if (is_array($element)) return false;
+        return true;
+    }
+
     // replacement dla nieistniejącej przed PHP 8 funkcji str_contains
     if (!function_exists('str_contains')) {
         function str_contains (string $haystack, string $needle)
