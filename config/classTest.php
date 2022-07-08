@@ -9,6 +9,7 @@
         public $testLAA = 0;                // czy można patrzyć na odpowiedzi
         public $testCT = 0;                 // czy można podejść do testu
         public $testVert = 0;               // czy test jest przewijalny
+        public $testPoints = 0;
 
         public $testQuestions = array();    // lista pytań
 
@@ -67,6 +68,7 @@
             while ($_row = $_sql->fetch_assoc()) {
 
                 $this->testQuestions[] = question::get($_row['id']);
+                $this->testPoints += $this->testQuestions[$i]->questionPoints;
 
                 $i++;
 
