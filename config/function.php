@@ -87,28 +87,29 @@
      * @return void
      */
     function review() {
-        $arr = &$_SESSION['ans'];
+        $ans = &$_SESSION['ans'];
+        $quest = unserialize($_SESSION['test'])->testQuestions;
         $points = 0;
-        $max = 0;
 
-        if(is_array($arr)) {
-            // dla każdego indeksu w $_SESSION['ans']
-            foreach($arr as $key => $ans) {
-                if ($ans['type'] == 1) { // jeżeli typ == 1, po prostu porównaj
-                    $points += ($ans['answer'] == $ans['correct']) ? $ans['points'] : 0;
-                } else if ($ans['type'] == 2) { // jeżeli typ == 2, sprawdź występowanie kolejnych znaków udzielonej odpowiedzi w poprawnej (po concArray())
-                    if (!empty($ans['answer'])) {
+        if(is_array($ans)) {
+
+            for ($i = 0; $i < count($quest); $i++) {
+
+                $q = $quest[$i];
+
+                if ($q->questionType == 1) $points += ($ans[$i] == $q->questionAnswer) ? $q->questionPoints : 0;
+                else if ($q->questionType == 2) {
+                    if (!empty($ans[$i])) {
                         $temp = 0;
-                        $ansArray = str_split($ans['answer']); // string -> tablica pojedynczych znaków
-                        foreach ($ansArray as $char) {
-                            $temp += (str_contains($ans['correct'], $char)) ? $ans['points'] : -$ans['points'];
-                        }
-                        $points += ($temp >= 0) ? $temp : 0; // nie chcemy odejmować punktów
+                        $ansArray = str_split($ans[$i]);
+                        foreach ($ansArray as $char) $temp += (str_contains($q->questionAnswer, $char)) ? $q->questionPoints : -$q->questionPoints; 
+                        $points += ($temp >= 0) ? $temp : 0;
                     }
-                } else if ($ans['type'] == 3) { // jeżeli typ == 3, skonwertuj obie na lowercase (dla wszystkich utf-8) i porównaj
+                } else if ($q->questionType == 3) {
                     mb_internal_encoding('UTF-8');
-                    $points += (mb_strtolower($ans['answer']) == mb_strtolower($ans['correct'])) ? $ans['points'] : 0;
-                }
+                    $points += (mb_strtolower($ans[$i]) == mb_strtolower($q->questionAnswer)) ? $q->questionPoints : 0;
+                } 
+
             }
         }
         return $points;
