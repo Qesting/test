@@ -19,8 +19,8 @@
         $sCode = (isset($_GET['s'])) ? $_GET['s'] : $sCode;
         $testId = argStrip($_GET['t']);
 
-        $test = &$_SESSION['test'];
         $test = test::get($testId);
+        shuffle($test->testQuestions);
 
         $link = dbConnect();
         $sql = $link->prepare("SELECT module.name AS mn, test.name AS tn FROM module, test WHERE module.id=test.module_id AND test.id=?");
@@ -73,6 +73,8 @@
 
                             $_SESSION['question'] = 0;
 
+                            $_SESSION['test'] = serialize($test);
+
                             header("location: question.php");
                             exit;
                         }
@@ -113,6 +115,8 @@
 
                             $_SESSION['question'] = 0;
 
+                            $_SESSION['test'] = serialize($test);
+
                             header("location: question.php");
                             exit;
                         }
@@ -128,6 +132,8 @@
                 $_SESSION['ans'] = array();
 
                 $_SESSION['question'] = 0;
+
+                $_SESSION['test'] = serialize($test);
 
                 header("location: question.php");
                 exit;
