@@ -44,42 +44,26 @@
             <main class="container">
                 <article>
                     <?php 
-                    
-                        $sql = mysqli_prepare($link, "SELECT content FROM question WHERE id=?");
+
+                        $quest = unserialize($_SESSION['test'])->testQuestions;
                         
-                        foreach ($_SESSION['qOrder'] as $key => $val) {
+                        for ($i = 0; $i < count($quest); $i++) {
 
                             echo "<section class='card card-body'>";
 
-                            mysqli_stmt_bind_param($sql, 'i', $val);
-                            mysqli_stmt_execute($sql);
-                            $res = mysqli_stmt_get_result($sql);
-                            $data = mysqli_fetch_array($res);
-
-                            $ans = $_SESSION['ans'][$key];
-                            $qo = $key + 1;
+                            $ans = $_SESSION['ans'][$i];
+                            $q = $quest[$i];
+                            $qo = $i + 1;
                             echo "<h4>Pytanie ${qo}:</h4>";
-                            echo "<h5 class='mb-3'>${data[0]}</h5>";
+                            echo "<h5 class='mb-3'>".$q->questionContent."</h5>";
 
                             
-                            switch ($ans['type']) {
+                            switch ($q->questionType) {
                                 case 1:
-                                    $sqla = mysqli_prepare($link, "SELECT content FROM answer WHERE quest_id=?");
-                                    mysqli_stmt_bind_param($sqla, 'i', $val);
-                                    mysqli_stmt_execute($sqla);
-                                    $res = mysqli_stmt_get_result($sqla);
-                                    $content = array();
-                                    $i = 1;
-                                    while($row = mysqli_fetch_array($res)) {
-                                        $content[$i] = $row[0];
-                                        $i++;
-                                    }
-                                    mysqli_stmt_close($sqla);
+                                    $a = (!empty($ans)) ? $q->questionAnsList[$ans - 1] : "brak";
+                                    $c = $q->questionAnsList[$q->questionAnswer - 1];
 
-                                    $a = (!empty($ans['answer'])) ? $content[$ans['answer']] : "brak";
-                                    $c = $content[$ans['correct']];
-
-                                    if($ans['answer'] == $ans['correct']) {
+                                    if($ans == $q->questionAnswer) {
                                         echo "<p>Twoja odpowiedź:</p>";
                                         echo "<p class='alert alert-success'>${a}</p>";
                                     } else {
@@ -91,33 +75,22 @@
                                     }
                                     break;
                                 case 2:
-                                    $sqla = mysqli_prepare($link, "SELECT content FROM answer WHERE quest_id=?");
-                                    mysqli_stmt_bind_param($sqla, 'i', $val);
-                                    mysqli_stmt_execute($sqla);
-                                    $res = mysqli_stmt_get_result($sqla);
-                                    $content = array();
-                                    $i = 1;
-                                    while($row = mysqli_fetch_array($res)) {
-                                        $content[$i] = $row[0];
-                                        $i++;
-                                    }
-                                    mysqli_stmt_close($sqla);
 
                                     $a = $c = array();
 
-                                    $arra = str_split($ans['answer']);
+                                    $arra = str_split($ans);
                                     foreach ($arra as $k => $v) {
 
-                                        $a[$k] = (!empty($v)) ? $content[$v] : "brak";
+                                        $a[$k] = (!empty($v)) ? $q->questionAnsList[$v - 1] : "brak";
                                     }
 
-                                    $arrc = str_split($ans['correct']);
+                                    $arrc = str_split($q->questionAnswer);
                                     foreach ($arrc as $k => $v) {
 
-                                        $c[$k] = $content[$v];
+                                        $c[$k] = $q->questionAnsList[$v - 1];
                                     }
                                     
-                                    if ($ans['correct'] == $ans['answer']) {
+                                    if ($ans == $q->questionAnswer) {
                                         echo "<p>Twoja odpowiedź:</p>";
                                         foreach ($a as $k => $v) {
                                             echo "<p class='alert alert-success'>${v}</p>";
@@ -135,10 +108,11 @@
                                     }
                                     break;
                                 case 3:
-                                    $a = (!empty($ans['answer'])) ? $ans['answer'] : "brak";
-                                    $c = $ans['correct'];
+                                    $a = (!empty($ans)) ? $ans : "brak";
+                                    $c = $q->questionAnswer;
 
-                                    if($ans['answer'] == $ans['correct']) {
+                                    mb_internal_encoding('UTF-8');
+                                    if(mb_strtolower($ans) == mb_strtolower($q->questionAnswer)) {
                                         echo "<p>Twoja odpowiedź:</p>";
                                         echo "<p class='alert alert-success'>${a}</p>";
                                     } else {
@@ -158,7 +132,7 @@
                 </article>
             </main>
             <footer class='pb-5 px-5'>
-                <a href='/index.php' class='btn btn-primary'>Powrót do strony głównej</a>
+                <a href='../index.php' class='btn btn-primary'>Powrót do strony głównej</a>
             </footer>
         </div>
     </body>
