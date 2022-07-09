@@ -1,19 +1,9 @@
 <?php 
-    $sql = mysqli_prepare($link, "SELECT points, quest_type, img_path, ans FROM question WHERE id=?");
-    mysqli_stmt_bind_param($sql, 'i', $qid);
-    mysqli_stmt_execute($sql);
-    $result = mysqli_stmt_get_result($sql);
-    $data = mysqli_fetch_assoc($result);
+    $question = $test->testQuestions[$i];
     
-    $points = $data['points'];
-    
-    $sql = mysqli_prepare($link, "SELECT COUNT(id) AS num FROM answer WHERE quest_id=?");
-    mysqli_stmt_bind_param($sql, 'i', $qid);
-    mysqli_stmt_execute($sql);
-    $res = mysqli_stmt_get_result($sql);
-    $a = mysqli_fetch_assoc($res);
+    $points = $question->questionPoints;
 
-    $point_show = ($data['quest_type'] == 2) ? $points * strlen($data['ans']) : "$points";
+    $point_show = ($question->questionType == 2) ? $points * strlen($question->questionAnswer) : "$points";
 ?>
 
 <div class='card-header'>
@@ -25,44 +15,24 @@
 
         <?php
         
-        $type = $data['quest_type'];
-        
-        if (is_null($data['img_path'])) {
+        if (is_null($question->questionImgPath)) {
             
         } else {
-            echo '<img class="rounded w" src="./../usermedia/'.$data['img_path'].'">';
+            echo '<img class="rounded w" src="./../usermedia/'.$question->questionImgPath.'">';
         }
 
-        switch ($data['quest_type']) {
+        switch ($question->questionType) {
             case 1:
                 
-                $query = "SELECT ans, content FROM question WHERE id=?";
-                $sql = mysqli_prepare($link, $query);
-                mysqli_stmt_bind_param($sql, 'i', $qid);
+                echo '<div class="form-group"><h5 class="mb-3 font-weight-bold">'.$question->questionContent.'</h5></div>'; 
                 
-                mysqli_stmt_execute($sql);
-                $result = mysqli_stmt_get_result($sql);
-                $data2 = mysqli_fetch_assoc($result);
-                
-                echo '<div class="form-group"><h5 class="mb-3 font-weight-bold">'.$data2['content'].'</h5></div>'; 
-                
-                $corr = $data2['ans'];
-                
-                $query = "SELECT content FROM answer WHERE quest_id=? AND ans_id=?";
-                for ($i = 1; $i <= $a['num']; $i++) {
+                for ($j = 1; $j <= count($question->questionAnsList); $j++) {
                     
-                    echo "<div class='form-group'><input type='radio' id='a${i}' name='${iter}[ans]' value='${i}'>";
+                    echo "<div class='form-group'><input type='radio' id='a${j}' name='${i}[ans]' value='${j}'>";
                     echo '<label class="form-label ml-2" for="a'.$i.'">';
                     
-                    $sql = mysqli_prepare($link, $query);
-                    mysqli_stmt_bind_param($sql, 'ii', $qid, $i);
-                    
-                    mysqli_stmt_execute($sql);
-                    $result = mysqli_stmt_get_result($sql);
-                    $data3 = mysqli_fetch_assoc($result);
-                    echo $data3['content'];
-                    
-                    echo '</label></div>';
+                    echo $question->questionAnsList[$j-1].'</label></div>';
+                
                 }
                 
                 break;
@@ -70,53 +40,27 @@
                 
             case 2:
                 
-                $query = "SELECT ans, content FROM question WHERE id=?";
-                $sql = mysqli_prepare($link, $query);
-                mysqli_stmt_bind_param($sql, 'i', $qid);
+                echo '<div class="form-group"><h5 class="mb-3 font-weight-bold">'.$question->questionContent.'</h5></div>'; 
                 
-                mysqli_stmt_execute($sql);
-                $result = mysqli_stmt_get_result($sql);
-                $data2 = mysqli_fetch_assoc($result);
-                
-                echo '<div class="form-group"><h5 class="mb-3 font-weight-bold">'.$data2['content'].'</h5></div>';  
-                
-                $corr = $data2['ans'];
-                
-                $query = "SELECT content FROM answer WHERE quest_id=? AND ans_id=?";
-                for ($i = 1; $i <= $a['num']; $i++) {
+                for ($j = 1; $j <= count($question->questionAnsList); $j++) {
                     
-                    echo "<div class='form-group'><input type='checkbox' id='a${i}' name='${iter}[ans][]'' value='$i'>";
+                    echo "<div class='form-group'><input type='checkbox' id='a${j}' name='${i}[ans]' value='${j}'>";
                     echo '<label class="form-label ml-2" for="a'.$i.'">';
                     
-                    $sql = mysqli_prepare($link, $query);
-                    mysqli_stmt_bind_param($sql, 'ii', $qid, $i);
-                    
-                    mysqli_stmt_execute($sql);
-                    $result = mysqli_stmt_get_result($sql);
-                    $data3 = mysqli_fetch_assoc($result);
-                    echo $data3['content'];
-                    
-                    echo '</label></div>';
+                    echo $question->questionAnsList[$j-1].'</label></div>';
+                
                 }
                 
                 break;
                 
+                break;
+                
             case 3:
-                
-                $query = "SELECT ans_text, content FROM question WHERE id=?";
-                $sql = mysqli_prepare($link, $query);
-                mysqli_stmt_bind_param($sql, 'i', $qid);
-                
-                mysqli_stmt_execute($sql);
-                $result = mysqli_stmt_get_result($sql);
-                $data2 = mysqli_fetch_assoc($result);
 
-                echo '<div class="form-group"><h5 class="mb-3 font-weight-bold">'.$data2['content'].'</h5></div>'; 
-                
-                $corr = $data2['ans_text'];
-                
+                echo '<div class="form-group"><h5 class="mb-3 font-weight-bold">'.$question->questionContent.'</h5></div>'; 
+                                
                 echo '<div class="form-group"><label class="form-label">Odpowiedź:</label>';
-                echo "<input type='text' class='form-control' name='${iter}[ans]'></div>";
+                echo "<input type='text' class='form-control' name='${i}[ans]'></div>";
                 
                 break;
             }
