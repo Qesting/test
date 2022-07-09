@@ -143,8 +143,6 @@
         exit;
     }
 
-    mysqli_close($link)
-
 ?>
 
 
