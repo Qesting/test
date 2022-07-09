@@ -1,15 +1,14 @@
 <?php
 
-        $sql0 = "SELECT part FROM session WHERE id=${sid}";
-        $res0 = mysqli_fetch_array(mysqli_query($link, $sql0));
-        $ent = $res0[0]+1;
+        $link = dbConnect();
 
-        $sql = "INSERT INTO s_entry (ent_id, session_id, name, class, perc, grade) VALUES ('${ent}', '${sid}', '${name}', '${class}', '${points}', '${grade}')";
-        $res = mysqli_query($link, $sql);
+        $ent = $link->query("SELECT part FROM session WHERE id=${sid}")->fetch_array()[0] + 1;
 
-        $sql1 = "UPDATE session SET part=part+1 WHERE id=${sid}";
-        $res1 = mysqli_query($link, $sql1);
+        $link->query("INSERT INTO s_entry (ent_id, session_id, name, class, perc, grade) VALUES ('${ent}', '${sid}', '${name}', '${class}', '${points}', '${grade}')");
 
-        $sql2 = "UPDATE test SET part=part+1 WHERE id=${test}";
-        $res2 = mysqli_query($link, $sql2);
+        $link->query("UPDATE session SET part=part+1 WHERE id=${sid}");
+
+        $link->query("UPDATE test SET part=part+1 WHERE id=${test}");
+
+        $link->close();
 ?>
