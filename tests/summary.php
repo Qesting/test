@@ -6,12 +6,12 @@
         exit;
     }
 
-    /*ini_set('display_errors', 1);
+    ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);*/
+    error_reporting(E_ALL);
 
     require_once('../config/config.php');
-    $maxpoints = (isset($_SESSION['maxpoints'])) ? $_SESSION['maxpoints'] : 1;
+    $maxpoints = (isset($_SESSION['test'])) ? unserialize($_SESSION['test'])->testPoints : 1;
     $score_cal = review();
 
     $points = round((($score_cal/$maxpoints)*100), 0, PHP_ROUND_HALF_UP);
@@ -23,12 +23,12 @@
         $sid = $_SESSION['sid'];
         $name = $_SESSION['name'].' '.$_SESSION['lastname'];
         $class = $_SESSION['class'];
-        $test = $_SESSION['test'];
+        $test = unserialize($_SESSION['test'])->testId;
         
         require_once("scoresave.php");
     }
 
-    $btn = ($_SESSION['laa'] == 1) ? "<a class='btn btn-secondary' href='laa.php'>Zobacz odpowiedzi</a>" : "";
+    $btn = (unserialize($_SESSION['test'])->testLAA == 1) ? "<a class='btn btn-secondary' href='laa.php'>Zobacz odpowiedzi</a>" : "";
 
 ?>
 
