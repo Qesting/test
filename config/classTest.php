@@ -63,14 +63,12 @@
             $_sql = $_stmt->get_result();
             $_stmt->close();
 
-            $i = 0;
-
             while ($_row = $_sql->fetch_assoc()) {
 
-                $this->testQuestions[] = question::get($_row['id']);
-                $this->testPoints += $this->testQuestions[$i]->questionPoints;
+                $newQ = question::get($_row['id']);
 
-                $i++;
+                $this->testPoints += ($newQ->questionType == 2) ? count($newQ->questionAnsList) * $newQ->questionPoints : $newQ->questionPoints;
+                $this->testQuestions[] = $newQ;
 
             }
 
