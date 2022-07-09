@@ -44,7 +44,7 @@
                 
                 for ($j = 1; $j <= count($question->questionAnsList); $j++) {
                     
-                    echo "<div class='form-group'><input type='checkbox' id='a${j}' name='${i}[ans]' value='${j}'>";
+                    echo "<div class='form-group'><input type='checkbox' id='a${j}' name='${i}[ans][]' value='${j}'>";
                     echo '<label class="form-label ml-2" for="a'.$i.'">';
                     
                     echo $question->questionAnsList[$j-1].'</label></div>';
