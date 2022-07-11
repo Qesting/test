@@ -4,14 +4,14 @@
 
     // czy tablica jest jednowymiarowa?
     // działa lepiej niż / if (count($a) != count($a, 1)) /, ponieważ nie ignoruje pustych tablic potomnych (długość 0)
-    function isNotMultidimensional(array $array) {
+    function isNotMultidimensional(array $array) :bool {
         foreach ($array as $element) if (is_array($element)) return false;
         return true;
     }
 
     // replacement dla nieistniejącej przed PHP 8 funkcji str_contains
     if (!function_exists('str_contains')) {
-        function str_contains (string $haystack, string $needle)
+        function str_contains (string $haystack, string $needle) :bool
         {
             return empty($needle) || strpos($haystack, $needle) !== false;
         }
@@ -24,7 +24,7 @@
      * 
      * @return void
      */
-    function showNot() {
+    function showNot() :void {
         global $notice, $notice_class;
 
         if (!empty($_SESSION['notice'])) {
@@ -44,11 +44,11 @@
     
     /**
      * Funkcja do zmieniania otrzymanych danych na ich "bezpieczną" formę
-     * - $formData - dane otrzymane w superglobalnej $_POST lub $_GET
+     * - $formData - dane otrzymane w superglobalnej $_POST lub $_GET (element tablicy)
      *
      * @return void
      */
-    function argStrip($formData) {
+    function argStrip(?string $formData) :string {
         $res = "";
         if (is_array($formData)) { // jeżeli argument jest tablicą, każdy jej element zostanie przepuszczony przez funkcję
             $i = 0;
@@ -66,11 +66,13 @@
     /**
      * Funkcja do zmieniania tablicy (najlepiej zawierającej pojedyncze znaki) na ciąg 
      * złożony z wszystkich jej elementów.
+     * - $separator - znak rozdzielający elementy (domyślnie pusty)
      *
      * @param  array $arr
+     * @param  string $separator
      * @return void
      */
-    function concArray($arr) {
+    function concArray(?array $arr, string $separator = "") :string {
         $result = "";
         if (is_array($arr)) {
             foreach ($arr as $val) {
@@ -86,7 +88,7 @@
      *
      * @return void
      */
-    function review() {
+    function review() :int {
         $ans = &$_SESSION['ans'];
         $quest = unserialize($_SESSION['test'])->testQuestions;
         $points = 0;
