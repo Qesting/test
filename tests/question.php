@@ -43,7 +43,7 @@
             </div>";
 
     $prevNext = ($test->testVert == 0) ? $btn : "";
-    $script = ($test->testVert == 0) ? "<script src='js/questTabs.js'></script>" : "<script src='js/layout.js'></script>";
+    $script = ($test->testVert == 0) ? "<script src='../js/questTabs.js'></script>" : "<script src='../js/layout.js'></script>";
     $sub = ($test->testVert != 0) ? "<input type='submit' class='btn btn-primary mt-3' value='Zatwierdź'>" : "";
 
     ?>
