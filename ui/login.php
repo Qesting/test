@@ -10,6 +10,8 @@ if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
  
 // Include config file
 require_once('../config/config.php');
+
+$link = dbConnect();
  
 // Define variables and initialize with empty values
 $username = $password = "";
@@ -35,26 +37,24 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     
     // Validate credentials
     if(empty($username_err) && empty($password_err)){
-        // Prepare a select statement
-        $sql = "SELECT id, username, password, priv FROM users WHERE username = ?";
-        
-        if($stmt = mysqli_prepare($link, $sql)){
+        // Prepare a select statement        
+        if($stmt = $link->prepare("SELECT id, username, password, priv FROM users WHERE username = ?")){
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "s", $param_username);
+            $stmt->bind_param("s", $param_username);
             
             // Set parameters
             $param_username = $username;
             
             // Attempt to execute the prepared statement
-            if(mysqli_stmt_execute($stmt)){
+            if($stmt->execute()){
                 // Store result
-                mysqli_stmt_store_result($stmt);
+                $stmt->store_result();
                 
                 // Check if username exists, if yes then verify password
-                if(mysqli_stmt_num_rows($stmt) == 1){                    
+                if($stmt->num_rows == 1){                    
                     // Bind result variables
-                    mysqli_stmt_bind_result($stmt, $id, $username, $hashed_password, $priv);
-                    if(mysqli_stmt_fetch($stmt)){
+                    $stmt->bind_result($id, $username, $hashed_password, $priv);
+                    if($stmt->fetch()){
                         if(password_verify($password, $hashed_password)){
                             if($priv != 0) {// Password is correct, so start a new session
                                 session_start();
@@ -85,12 +85,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             }
 
             // Close statement
-            mysqli_stmt_close($stmt);
+            $stmt->close();
         }
     }
     
     // Close connection
-    mysqli_close($link);
+    $link->close();
 }
 ?>
  
