@@ -9,20 +9,26 @@
 
     $id = $_SESSION['id'];
 
+    $link = dbConnect();
+
+    $notice = $notice_class = "";
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $uid = argStrip($_POST['uid']);
         $new_perm = argStrip($_POST['new_perm']);
 
         if (is_numeric($uid) && is_numeric($new_perm)) {
-            $sql = mysqli_prepare($link, "UPDATE users SET priv=? WHERE id=?");
-            mysqli_stmt_bind_param($sql, 'ii', $new_perm, $uid);
-            mysqli_stmt_execute($sql);
+            $sql = $link->prepare($link, "UPDATE users SET priv=? WHERE id=?");
+            $sql->bind_param('ii', $new_perm, $uid);
+            $sql->execute();
 
-            if(mysqli_stmt_affected_rows($sql) == 0) {
+            if($sql->affected_rows == 0) {
                 $_SESSION['notice'] = "w-Uprawnienia użytkownika nie uległy zmianie.";
             } else {
                 $_SESSION['notice'] = "s-Pomyślnie zmieniono uprawnienia użytkownika!";
             }
+
+            $sql->close();
         } else {
             $_SESSION['notice'] = "e-Wystąpił błąd. Spróbuj ponownie później.";
         }
@@ -31,10 +37,14 @@
         exit;
     }
 
-    $sql = mysqli_prepare($link,"SELECT id, username, created_at, priv FROM users WHERE id!=?");
-    mysqli_stmt_bind_param($sql, 'i', $id);
-    mysqli_stmt_execute($sql);
-    $res = mysqli_stmt_get_result($sql);
+    showNot();
+
+    $sql = $link->prepare("SELECT id, username, created_at, priv FROM users WHERE id!=?");
+    $sql->bind_param('i', $id);
+    $sql->execute();
+    $res = $sql->get_result();
+    $sql->close();
+    $link->close();
 ?>
 
 <!DOCTYPE html>
@@ -63,7 +73,7 @@
         <div class="wrapper">
             <h1 class="mt-5">Zarządzanie użytkownikami</h1>
             <div class="container">
-                <div class="container mt-3"><p <?php echo $_SESSION['error_class']; ?>><?php echo $_SESSION['error']; unset($_SESSION['error'], $_SESSION['error_class']); ?></p></div>
+                <div class="container mt-3"><?php echo "<p id=\"notice\" class=\"${notice_class}\">${notice}</p>"; ?></div>
                 <div class="card card-body mt-3">
                     <table class="table">
                         <thead>
@@ -75,19 +85,27 @@
                         </thead>    
                         <tbody>
                         <?php
-                            while ($row = mysqli_fetch_assoc($res)) {
+                            while ($row = $res->fetch_assoc()) {
                                 if ($row['priv'] == 0) {
                                     $sel1 = "selected";
                                     $sel2 = "";
                                     $sel3 = "";
+                                    $sel4 = "";
                                 } else if ($row['priv'] == 1) {
                                     $sel1 = "";
                                     $sel2 = "selected";
                                     $sel3 = "";
+                                    $sel4 = "";
                                 } else if ($row['priv'] == 2) {
                                     $sel1 = "";
                                     $sel2 = "";
                                     $sel3 = "selected";
+                                    $sel4 = "";
+                                } else if ($row['priv'] == 3) {
+                                    $sel1 = "";
+                                    $sel2 = "";
+                                    $sel3 = "";
+                                    $sel4 = "selected";
                                 }
 
 
@@ -100,8 +118,9 @@
                                 <div class="btn-group">
                                 <select name="new_perm" class="form-control">
                                 <option value="0" '.$sel1.'>Oczekujący</option>
-                                <option value="1" '.$sel2.'>Użytkownik</option>
-                                <option value="2" '.$sel3.'>Administrator</option>
+                                <option value="1" '.$sel2.'>Piszący</option>
+                                <option value="2" '.$sel3.'>Użytkownik</option>
+                                <option value="3" '.$sel4.'>Administrator</option>
                                 </select>
                                 <input type="submit" value="Zatwierdź" class="btn btn-outline-primary btn-sm">
                                 </div></form></td>

@@ -29,7 +29,7 @@
 
     $sql->close();
 
-    if ($_SESSION['priv'] == 2) {
+    if ($_SESSION['priv'] == 3) {
         $sql = $link->query("SELECT COUNT(id) FROM users WHERE priv='0'");
         $result = $sql->fetch_array();
         $badge = ($result[0] > 0) ? " <span class='badge badge-light'>${result[0]}</span>" : "";
