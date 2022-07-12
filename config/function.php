@@ -76,7 +76,7 @@
         $result = "";
         if (is_array($arr)) {
             foreach ($arr as $val) {
-                $result .= (is_array($val)) ? concArray($val) : argStrip($val);
+                $result .= (is_array($val)) ? concArray($val) : $separator . argStrip($val);
             }
         }
         return $result;
