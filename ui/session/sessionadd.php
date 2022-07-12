@@ -12,6 +12,8 @@
 
     $notice = $notice_class = "";
 
+    $link = dbConnect();
+
     if ($_SERVER['REQUEST_METHOD'] == "POST") {
         if ($_POST['test'] != 0) {
             $exp = "/[0-9]{6}/";
@@ -24,10 +26,10 @@
     
             $cl = (empty($_POST['cl'])) ? 0 : 1;
     
-            $sql = mysqli_prepare($link, "INSERT INTO session (code, test_id, can_laa, owner) VALUES (?, ?, ?, ?)");
-            mysqli_stmt_bind_param($sql, 'siii', $code, $test, $cl, $owner);
-            mysqli_stmt_execute($sql);
-            if(empty(mysqli_stmt_error($sql))) {
+            $sql = $link->prepare("INSERT INTO session (code, test_id, can_laa, owner) VALUES (?, ?, ?, ?)");
+            $sql->bind_param('siii', $code, $test, $cl, $owner);
+            $sql->execute();
+            if(empty($sql->error)) {
                 $_SESSION['notice'] = "Pomyślnie dodano sesję!";
                 header("location: sessionadd.php");
                 exit;
@@ -44,18 +46,15 @@
             $code .= rand(0, 9);
         }
 
-        $sql = mysqli_prepare($link, "SELECT id FROM session WHERE code=?");
-        mysqli_stmt_bind_param($sql, 's', $code);
-        mysqli_stmt_execute($sql);
-        $num = mysqli_stmt_num_rows($sql);
+        $sql = $link->prepare("SELECT id FROM session WHERE code=?");
+        $sql->bind_param('s', $code);
+        $sql->execute();
+        $num = $sql->num_rows;
 
-        if (empty($num)) {
-            $num = 0;
-        }
+        $num = (empty($num)) ? 0 : $num;
     } while ($num != 0);
 
-    $sql = "SELECT test.id, module.name, test.name FROM test, module WHERE module.id=test.module_id";
-    $res = mysqli_query($link, $sql);
+    $sql = $link->query("SELECT test.id, module.name, test.name FROM test, module WHERE module.id=test.module_id");
 
     showNot();
 ?>
@@ -96,7 +95,7 @@
                         <select id="testsel" name="test" class="form-control">
                             <option value="0" selected>--Wybierz opcję--</option>
                             <?php 
-                                while ($row = mysqli_fetch_array($res)) {
+                                while ($row = $res->fetch_array()) {
                                     echo '<option value="'.$row[0].'">'.$row[1].' - '.$row[2].'</option>';
                                 }
                             ?>
