@@ -9,8 +9,7 @@
 
     // połączenie z bazą
     function dbConnect() {
-    $link = new mysqli(dbServer, dbUser, dbPasswd, dbName);
-    return $link;
+        return new mysqli(dbServer, dbUser, dbPasswd, dbName);
     }
 
     /* Attempt to connect to MySQL database */
