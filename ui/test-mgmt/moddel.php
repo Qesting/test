@@ -7,12 +7,17 @@
     require_once('../../config/config.php');
 
     if($_SESSION['priv'] == 2) {
+
+        $link = dbConnect();
         
         $id = $_SESSION['module_id'];
 
-        $sql = mysqli_prepare($link, "DELETE FROM module WHERE id=?");
-        mysqli_stmt_bind_param($sql, 'i', $id);
-        mysqli_stmt_execute($sql);
+        $sql = $link->prepare("DELETE FROM module WHERE id=?");
+        $sql->bind_param('i', $id);
+        $sql->execute();
+
+        $sql->close();
+        $link->close();
 
         unset($_SESSION['module_id']);
         header('location: mod.php');
