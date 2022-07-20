@@ -4,16 +4,20 @@
         header("location: ../login.php");
         exit;
     }
-    require_once("../../config.php");
+    require_once('../../config/config.php');
 
     $id = $_SESSION['test_id'];
 
-    $sql = mysqli_prepare($link, "DELETE FROM test WHERE id=?");
-    mysqli_stmt_bind_param($sql, 'i', $id);
-    mysqli_stmt_execute($sql);
+    $link = dbConnect();
 
-    $_SESSION['error'] = "Pomyślnie usunięto test!";
-    $_SESSION['error_class'] = 'class="alert alert-success"';
+    $sql = $link->prepare("DELETE FROM test WHERE id=?");
+    $sql->bind_param('i', $id);
+    $sql->execute();
+
+    $sql->close();
+    $link->close();
+
+    $_SESSION['notice'] = "s-Pomyślnie usunięto test!";
 
     unset($_SESSION['test_id']);
     header('location: test.php');

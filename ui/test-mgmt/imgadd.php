@@ -11,114 +11,140 @@
         header("location: ../login.php");
         exit;
     }
-    require_once("../../config.php");
+    require_once('../../config/config.php');
 
     $notice = $notice_class = "";
 
-    function fUp() {
-        // weryfikacja nazwy
+    $link = dbConnect();
 
-        global $notice;
-        global $link;
-        global $id;
+    $test = unserialize($_SESSION['edit_test']);
 
-        $dir = "../../usermedia/";
-        $fup = $_FILES['img']['name'];
-        $ext = pathinfo($fup, PATHINFO_EXTENSION);
-    
-        if(!empty(pathinfo($fup, PATHINFO_FILENAME))) {
-            if (!empty($_POST['fname'])) {
-                $new_fname = trim(htmlspecialchars($_POST['fname']));
-            } else {
-                $new_fname = pathinfo($fup, PATHINFO_FILENAME);
+    if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['mode'])) {
+
+        if ($_POST['mode'] == "add") {
+
+            $num = argStrip($_POST['num']);
+
+            if ($num <= 0 || $num > count($test->testQuestions)) {
+
+                $_SESSION['notice'] = "e-Musisz wybrać pytanie!";
+                header('location: imgadd.php');
+                exit;
+
             }
-        } else {
-            $notice = "e-Musisz wybrać plik!";
-            return false;
-            $_POST = array();
-        }
-        
-    
-        // składanie nazwy pliku
-        
-        $file = $new_fname.'.'.$ext;
-    
-        // czy plik istnieje
-    
-        if (file_exists("./../../media/".$file)) {
-            $notice = "e-Plik o podanej nazwie i typie już istnieje!";
-            return false;
-        }
-    
-        // czy plik nie jest za duży
-    
-        if($_FILES['img']['size'] > 1000000) {
-            $notice = "e-Maksymalny rozmiar pliku wynosi 1 MiB!";
-            return false;
-        }
-    
-        $exp = "/jpg|jpeg|png/";
-        if(!preg_match($exp, $ext)) {
-            $notice = "e-Plik nie ma właściwego formatu!";
-            return false;
-        }
-    
-        if (copy($_FILES['img']['tmp_name'], "./../../media/".$file)) {
-        
-            $sql = mysqli_prepare($link, "UPDATE question SET img_path=? WHERE id=?");
-            mysqli_stmt_bind_param($sql, 'si', $file, $id);
-            mysqli_stmt_execute($sql);
-    
-            if(empty(mysqli_stmt_error($sql))) {
-                $notice = "s-Plik został przekazany na serwer!";
-                return true;
-            } else {
-                $notice = "e-Wystąpił błąd, spróbuj ponownie później.";
-                return false;
+
+            $file = $_FILES['file'];
+
+            $fname = trim($_POST['fname']);
+
+            if (preg_match("[#%&\{\}\\<>*?\/\$\!'\":;@+\`|=]", $fname)) {
+
+                $_SESSION['notice'] = "e-Nazwa zawiera niedozwolone znaki!";
+                header('location: imgadd.php');
+                exit;
+
             }
-        } else {
-            $notice = "e-Wystąpił błąd, spróbuj ponownie później.";
-            return false;
+
+            $ext = strtolower(pathinfo(basename($file['name']), PATHINFO_EXTENSION));
+
+            $target = "../../usermedia/{$fname}.{$ext}";
+
+            if (is_uploaded_file($file['tmp_name'])) {
+
+                $mime = mime_content_type($file['tmp_name']);
+                $allowedMime = ['image/png', 'image/jpeg', 'image/webp'];
+
+                if (!in_array($mime, $allowedMime)) {
+
+                    $_SESSION['notice'] = "e-Niedozwolony typ pliku!";
+                    header('location: imgadd.php');
+                    exit;
+                    
+                }
+
+                if ($file['size'] > pow(1024, 2)) {
+
+                    $_SESSION['notice'] = "e-Plik jest zbyt duży, maksymalny rozmiar to 1 MiB!";
+                    header('location: imgadd.php');
+                    exit;
+
+                }
+
+                if (move_uploaded_file($file['tmp_name'], $target)) {
+                    
+                    if ($test->testQuestions[$num - 1]->setPath("{$fname}.{$ext}")) {
+
+                        $_SESSION['notice'] = "s-Plik został zapisany!";
+                        $_SESSION['edit_test'] = serialize($test);
+                        header('location: imgadd.php');
+                        exit;
+
+                    } else {
+
+                        unlink($target);
+
+                        $_SESSION['notice'] = "e-Wystąpił błąd. Spróbuj ponownie później.";
+                        header('location: imgadd.php');
+                        exit;
+
+                    }
+
+                    $_SESSION['notice'] = "e-Wystąpił błąd. Spróbuj ponownie później.";
+                    header('location: imgadd.php');
+                    exit;
+
+                }
+
+            } else {
+
+                $_SESSION['notice'] = "e-Wystąpił błąd.";
+                header('location: imgadd.php');
+                exit;
+
+            }
+
+        } else if ($_POST['mode'] == "del") {
+
+            $num = argStrip($_POST['num']);
+
+            if ($num <= 0 || $num > count($test->testQuestions)) {
+
+                $_SESSION['notice'] = "e-Wystąpił błąd. Spróbuj ponownie później.";
+                header('location: imgadd.php');
+                exit;
+
+            }
+
+            $fname = $test->testQuestions[$num - 1]->questionImgPath;
+
+            if (unlink("../../usermedia/{$fname}")) {
+
+                if ($test->testQuestions[$num - 1]->setPath("")) {
+
+                    $_SESSION['notice'] = "s-Plik został usunięty!";
+                    $_SESSION['edit_test'] = serialize($test);
+                    header('location: imgadd.php');
+                    exit;
+
+                } else {
+
+                    $_SESSION['notice'] = "e-Wystąpił błąd. Spróbuj ponownie później.";
+                    header('location: imgadd.php');
+                    exit;
+
+                }
+
+                $_SESSION['notice'] = "e-Wystąpił błąd. Spróbuj ponownie później.";
+                header('location: imgadd.php');
+                exit;
+
+            }
+
         }
-    }
-    
-    $id = $_SESSION['qid'];
-
-    if ($_SERVER['REQUEST_METHOD'] == "POST") {
-
-
-        if (isset($_POST['imgAdd'])) {
-            if(fUp()) {
-                $_SESSION['notice'] = $notice;
-                //header("location: ${_SERVER['PHP_SELF']}");
-            } 
-        } else if (isset($_POST['imgDel'])) {
-
-            $sql = mysqli_prepare($link,"SELECT img_path FROM question WHERE id=?");
-            mysqli_stmt_bind_param($sql, 'i', $id);
-            mysqli_stmt_execute($sql);
-            $res = mysqli_stmt_get_result($sql);
-            $data = mysqli_fetch_array($res);
-            $file = $data[0];
-
-            unlink("./../../media/${file}");
-
-            $sql = mysqli_prepare($link, "UPDATE question SET img_path=NULL WHERE id=?");
-            mysqli_stmt_bind_param($sql, 'i', $qid);
-            mysqli_stmt_execute($sql);
-            header("location: ${_SERVER['PHP_SELF']}");
-        }
+        
     }
 
     showNot();
-
-    $sql = mysqli_prepare($link, "SELECT img_path FROM question WHERE id=?");
-    mysqli_stmt_bind_param($sql, 'i', $id);
-    mysqli_stmt_execute($sql);
-    $res = mysqli_stmt_get_result($sql);
-    $data = mysqli_fetch_array($res);
-
-    $ex = file_exists("./../../media/".$data['img_path']);
 
 ?>
 
@@ -149,33 +175,41 @@
         <div class="wrapper">
             <div class="container">
                 <h2 class="my-5">Dodawanie obrazu</h2>
-                <?php 
-                    if (empty($data['img_path']) || $ex === false) {
-                        echo '<form method="post" enctype="multipart/form-data">
+                <form method="post" enctype="multipart/form-data">
+                    <input type='hidden' name='mode' id='mode'/>
+                    <div class='form-group'>
+                        <label class='form-label'>Pytanie</label>
+                        <select id='question' name='num' class='form-control'>
+                            <option value='0'>-- Wybierz pytanie --</option>
+                            <?php 
+                                for ($i = 0; $i < count($test->testQuestions); $i++) {
 
-                        <div class="form-group">
-                            <label for="fname" class="form-label">Nazwa dla obrazu</label>
-                            <input id="fname" type="text" name="fname" class="form-control">
+                                    $question  = $test->testQuestions[$i];
+                                    $j = $i + 1;
+
+                                    echo "<option value='{$j}' data-type='{$question->questionType}' data-imgpath='{$question->questionImgPath}'>{$j} - {$question->questionContent}</option>";
+
+                                }
+                            ?>
+                        </select>
+                        <div class='alert alert-info mt-4'>
+                                <p><b>Typ pytania:</b> <span id='type'></span></p>
+                                <p><b>Posiada obraz?</b> <span id='hasimg'></span></p>
                         </div>
-                        <div class="form-group">
-                            <label for="file" class="form-label">Obraz do przesłania</label>
-                            <input style="text-align: center;" name="img" type="file" id="file" class="form-control" accept="image/*">
+                        <div class='btn-group'>
+                            <button type='button' class='btn btn-secondary' id='prev'><span class='bi-caret-left-fill'></span> Poprzednie pytanie</button>
+                            <button type='button' class='btn btn-outline-secondary disabled'></button>
+                            <button type='button' class='btn btn-secondary' id='next'>Poprzednie pytanie <span class='bi-caret-right-fill'></span></button>
                         </div>
-                        <div class="form-group btn-group">
-                            <input type="submit" name="imgAdd" value="Zatwierdź" class="btn btn-primary">
-                        </div>
-                        </form>';
-                    } else {
-                        echo '<div class="card card-body">
-                        <form method="post">
-                        <h4 class="my-5">To pytanie zawiera już obraz</h4>
-                        <input type="submit" name="imgDel" value="Usuń obraz" class="btn btn-danger">
-                        </form>
-                        </div>';
-                    }
-                ?>
-                <?php echo "<p id=\"notice\" class=\"${notice_class}\">${notice}</p>"; ?>
+                    </div>
+                    <div id='options'></div>
+                    <div class="form-group btn-group">
+                        <button type="button" name="imgAdd" class="btn btn-primary d-none" id='btnsubmit'><span class='bi-file-earmark-plus'></span> Dodaj obraz</button>
+                    </div>
+                </form>
+                <?php echo "<p id='error' class='{$notice_class}'>{$notice}</p>" ?>
             </div>
         </div>
+        <script src='../../js/imgChange.js'></script>
     </body>
 </html>

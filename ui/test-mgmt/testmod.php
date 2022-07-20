@@ -9,11 +9,14 @@
         header("location: ../login.php");
         exit;
     }
-    require_once("../../config.php");
+    require_once('../../config/config.php');
 
-    $id = $_SESSION['test_id'];
+    $link = dbConnect();
+
     $cl = $ct = $vert = "";
     
+    $test = unserialize($_SESSION['edit_test']);
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST['save'])) {
             $name = argStrip($_POST['name']);
@@ -22,34 +25,38 @@
             $cl = (!empty($_POST['cl'])) ? 1 : 0;
             $vert = (!empty($_POST['vert'])) ? 1 : 0;
 
-
             $time = argStrip($_POST['time']);
 
-            $sql = mysqli_prepare($link, "UPDATE test SET name=?, can_take=?, can_laa=?, vert=?, time=? WHERE id=?");
-            mysqli_stmt_bind_param($sql, 'siiiii', $name, $ct, $cl, $vert, $time, $id);
-            mysqli_stmt_execute($sql);
+            try {
+
+                $test->updateTest($time, $vert, $cl, $ct);
+                
+                if ($name != $test->testName) $test->setName($name);
+
+            } catch (Exception $e) {
+
+                echo $e->getMessage();
+
+            }
+
+            $_SESSION['edit_test'] = serialize($test);
+
             header("location: ${_SERVER['PHP_SELF']}");
             exit;
         }
     }
 
-    $sql = mysqli_prepare($link, "SELECT can_take, can_laa, vert, time FROM test WHERE id=?");
-    mysqli_stmt_bind_param($sql, 'i', $id);
-    mysqli_stmt_execute($sql);
-    $res = mysqli_stmt_get_result($sql);
-    $res = mysqli_fetch_assoc($res);
-
-    if ($res['can_take'] == 1) {
+    if ($test->testCT) {
         $ct = "checked";
     }
-    if ($res['can_laa'] == 1) {
+    if ($test->testLAA) {
         $cl = "checked";
     }
-    if ($res['vert'] == 1) {
+    if ($test->testVert) {
         $vert = "checked";
     }
 
-    $time = $res['time'];
+    $time = $test->testTime;
 ?>
 
 <!DOCTYPE html>
@@ -80,13 +87,13 @@
             </div>
         </nav>
         <div class="wrapper">
-            <h1 class="my-5">Wybrany test: <?php echo $_SESSION['test_name']; ?></h1>
+            <h1 class="my-5">Wybrany test: <?php echo $test->testName; ?></h1>
             <div class="container">
                 <form method="post">
                     <h2 class="my-5">Zmień właściwości testu:</h2>
                     <div class="form-group">
                         <label for="name">Nazwa testu:</label>
-                        <input type="text" class="form-control" name="name" value="<?php echo $_SESSION['test_name']; ?>">
+                        <input type="text" class="form-control" name="name" value="<?php echo $test->testName; ?>">
                     </div>
                     <div class="form-group">
                         <label for="time">Ilość czasu/pytanie (sekundy)</label>

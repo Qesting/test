@@ -2,9 +2,16 @@
 
     // funkcje używane w wielu miejscach
 
+    // czy tablica jest jednowymiarowa?
+    // działa lepiej niż / if (count($a) != count($a, 1)) /, ponieważ nie ignoruje pustych tablic potomnych (długość 0)
+    function isNotMultidimensional(array $array) :bool {
+        foreach ($array as $element) if (is_array($element)) return false;
+        return true;
+    }
+
     // replacement dla nieistniejącej przed PHP 8 funkcji str_contains
     if (!function_exists('str_contains')) {
-        function str_contains (string $haystack, string $needle)
+        function str_contains (string $haystack, string $needle) :bool
         {
             return empty($needle) || strpos($haystack, $needle) !== false;
         }
@@ -17,7 +24,7 @@
      * 
      * @return void
      */
-    function showNot() {
+    function showNot() :void {
         global $notice, $notice_class;
 
         if (!empty($_SESSION['notice'])) {
@@ -37,19 +44,15 @@
     
     /**
      * Funkcja do zmieniania otrzymanych danych na ich "bezpieczną" formę
-     * - $formData - dane otrzymane w superglobalnej $_POST lub $_GET
+     * - $formData - dane otrzymane w superglobalnej $_POST lub $_GET (element tablicy)
      *
      * @return void
      */
-    function argStrip($formData) {
+    function argStrip(string|array|null $formData) :string|array {
         $res = "";
         if (is_array($formData)) { // jeżeli argument jest tablicą, każdy jej element zostanie przepuszczony przez funkcję
-            $i = 0;
             $res = array();
-            foreach($formData as $val) {
-                $res[$i] = argStrip($val);
-                $i++;
-            }
+            foreach($formData as $key => $val) $res[$key] = argStrip($val);
         } else {
             $res = htmlspecialchars(stripslashes(trim($formData)));
         }
@@ -59,15 +62,17 @@
     /**
      * Funkcja do zmieniania tablicy (najlepiej zawierającej pojedyncze znaki) na ciąg 
      * złożony z wszystkich jej elementów.
+     * - $separator - znak rozdzielający elementy (domyślnie pusty)
      *
      * @param  array $arr
+     * @param  string $separator
      * @return void
      */
-    function concArray($arr) {
+    function concArray(?array $arr, string $separator = "") :string {
         $result = "";
         if (is_array($arr)) {
             foreach ($arr as $val) {
-                $result .= (is_array($val)) ? concArray($val) : argStrip($val);
+                $result .= (is_array($val)) ? concArray($val) : argStrip($val).$separator;
             }
         }
         return $result;
@@ -79,29 +84,30 @@
      *
      * @return void
      */
-    function review() {
-        $arr = &$_SESSION['ans'];
+    function review() :int {
+        $ans = &$_SESSION['ans'];
+        $quest = unserialize($_SESSION['test'])->testQuestions;
         $points = 0;
-        $max = 0;
 
-        if(is_array($arr)) {
-            // dla każdego indeksu w $_SESSION['ans']
-            foreach($arr as $key => $ans) {
-                if ($ans['type'] == 1) { // jeżeli typ == 1, po prostu porównaj
-                    $points += ($ans['answer'] == $ans['correct']) ? $ans['points'] : 0;
-                } else if ($ans['type'] == 2) { // jeżeli typ == 2, sprawdź występowanie kolejnych znaków udzielonej odpowiedzi w poprawnej (po concArray())
-                    if (!empty($ans['answer'])) {
+        if(is_array($ans)) {
+
+            for ($i = 0; $i < count($quest); $i++) {
+
+                $q = $quest[$i];
+
+                if ($q->questionType == 1) $points += ($ans[$i] == $q->questionAnswer) ? $q->questionPoints : 0;
+                else if ($q->questionType == 2) {
+                    if (!empty($ans[$i])) {
                         $temp = 0;
-                        $ansArray = str_split($ans['answer']); // string -> tablica pojedynczych znaków
-                        foreach ($ansArray as $char) {
-                            $temp += (str_contains($ans['correct'], $char)) ? $ans['points'] : -$ans['points'];
-                        }
-                        $points += ($temp >= 0) ? $temp : 0; // nie chcemy odejmować punktów
+                        $ansArray = str_split($ans[$i]);
+                        foreach ($ansArray as $char) $temp += (str_contains($q->questionAnswer, $char)) ? $q->questionPoints : -$q->questionPoints; 
+                        $points += ($temp >= 0) ? $temp : 0;
                     }
-                } else if ($ans['type'] == 3) { // jeżeli typ == 3, skonwertuj obie na lowercase (dla wszystkich utf-8) i porównaj
+                } else if ($q->questionType == 3) {
                     mb_internal_encoding('UTF-8');
-                    $points += (mb_strtolower($ans['answer']) == mb_strtolower($ans['correct'])) ? $ans['points'] : 0;
-                }
+                    $points += (mb_strtolower($ans[$i]) == mb_strtolower($q->questionAnswer)) ? $q->questionPoints : 0;
+                } 
+
             }
         }
         return $points;

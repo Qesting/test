@@ -5,7 +5,7 @@
         header("location: ../login.php");
         exit;
     }
-    require_once("../../config.php"); 
+    require_once('../../config/config.php');
 
     if($_SERVER["REQUEST_METHOD"] == "POST") {
         if (!empty($_POST['session'])) {
@@ -13,12 +13,17 @@
             $_POST = array();
         }
     }
+
+    $link = dbConnect();
     
-    $sql = mysqli_prepare($link, "SELECT code, is_open, closed FROM session WHERE id=?");
-    mysqli_stmt_bind_param($sql, 'i', $sid);
-    mysqli_stmt_execute($sql);
-    $res = mysqli_stmt_get_result($sql);
-    $data = mysqli_fetch_assoc($res);
+    $sql = $link->prepare("SELECT code, is_open, closed FROM session WHERE id=?");
+    $sql->bind_param('i', $sid);
+    $sql->execute();;
+    $res = $sql->get_result();
+
+    $sql->close();
+
+    $data = $res->fetch_assoc();
 
     if ($data['is_open'] == 0 && !empty($data['closed'])) {
         $status = "Zakończona";
@@ -28,10 +33,13 @@
         $status = "Otwarta";
     }
 
-    $sql1 = mysqli_prepare($link, "SELECT s_entry.ent_id, s_entry.name, s_entry.class, s_entry.perc, grade.str AS grade FROM s_entry, grade WHERE grade.id=s_entry.grade AND s_entry.session_id=?");
-    mysqli_stmt_bind_param($sql1, 'i', $sid);
-    mysqli_stmt_execute($sql1);
-    $res1 = mysqli_stmt_get_result($sql1);
+    $sql = $link->prepare("SELECT s_entry.ent_id, s_entry.name, s_entry.class, s_entry.perc, grade.str AS grade FROM s_entry, grade WHERE grade.id=s_entry.grade AND s_entry.session_id=?");
+    $sql->bind_param('i', $sid);
+    $sql->execute();
+    $res1 = $sql->get_result();
+
+    $sql->close();
+    $link->close();
 
 ?>
 
@@ -72,7 +80,7 @@
                     </thead>
                     <tbody>
                         <?php
-                            while ($row = mysqli_fetch_assoc($res1)) {
+                            while ($row = $res1->fetch_assoc()) {
                                 echo '<tr>
                                     <td>'.$row['ent_id'].'</td>
                                     <td>'.$row['name'].'</td>
