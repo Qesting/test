@@ -222,14 +222,14 @@
         }
 
         // dodaj pytanie
-        private function addQuestion($_test, $_content, $_type, $_answer, $_list) {
+        private function addQuestion($_test, $_content, $_type, $_answer, $_list, $_points) {
 
             $_link = dbConnect();
 
             if ($_type == 3) {
 
-                $_stmt = $_link->prepare("INSERT INTO question (test_id, content, ans_text, quest_type) VALUES (?, ?, ?, '3')");
-                $_stmt->bind_param('iss', $_test, $_content, $_answer);
+                $_stmt = $_link->prepare("INSERT INTO question (test_id, content, ans_text, quest_type, points) VALUES (?, ?, ?, '3', ?)");
+                $_stmt->bind_param('issi', $_test, $_content, $_answer, $_points);
                 $_stmt->execute();
                 
                 $this->questionId = $_stmt->insert_id;
@@ -239,8 +239,8 @@
 
             } else if (is_array($_list)) {
 
-                $_stmt = $_link->prepare("INSERT INTO question (test_id, content, ans, quest_type) VALUES (?, ?, ?, ?)");
-                $_stmt->bind_param('issi', $_test, $_content, $_answer, $_type);
+                $_stmt = $_link->prepare("INSERT INTO question (test_id, content, ans, quest_type, points) VALUES (?, ?, ?, ?, ?)");
+                $_stmt->bind_param('issii', $_test, $_content, $_answer, $_type, $_points);
                 $_stmt->execute();
                 
                 $this->questionId = $_stmt->insert_id;
@@ -257,5 +257,22 @@
 
             $_link->close();
 
+        }
+
+        public function setPath(string $path) :bool {
+
+            $this->questionImgPath = $path;
+
+            $_link = dbConnect();
+            $_stmt = $_link->prepare("UPDATE question SET img_path=? WHERE id=?");
+            $_stmt->bind_param('si', $path, $this->questionId);
+            $_stmt->execute();
+
+            if (!$_stmt) return false;
+
+            $_stmt->close();
+            $_link->close();
+
+            return true;
         }
     }
