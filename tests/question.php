@@ -1,6 +1,6 @@
 <?php
     session_start();
-    require_once("../config.php");
+    require_once('../config/config.php');
 
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
@@ -10,12 +10,13 @@
         $_SESSION['question'] += 1;
     } else {
         if ($_SERVER['REQUEST_METHOD'] == "POST") { // nie wychodź, jeżeli przesyłane są dane do sprawdzenia
-            $count = count($_SESSION['ans']);
+
+            $count = count((unserialize($_SESSION['test'])->testQuestions));
             for ($i = 0; $i < $count; $i++) { // zbierz wszystkie odpowiedzi
                 $test = (isset($_POST[$i])) ? argStrip($_POST[$i]['ans']) : "";
                 $ans = (is_array($test)) ? concArray($test) : $test;
     
-                $_SESSION['ans'][$i]['answer'] = $ans;        
+                $_SESSION['ans'][$i] = $ans;        
             }
     
             header("location: summary.php");
@@ -28,15 +29,10 @@
 
     $prevNext = $script = $sub = "";
 
+    $test = unserialize($_SESSION['test']);
+
     $qnum = 0;
-    $qcount = $_SESSION['quest_num'];
-
-    if (!isset($_SESSION['qOrder'])) {
-        $_SESSION['qOrder'] = $_SESSION['quest_arr'];
-        shuffle($_SESSION['qOrder']);
-    }
-
-    $rand = $_SESSION['qOrder'];
+    $qcount = count($test->testQuestions);
 
     $btn = "<div class='form-group mt-3' style='text-align: center;'>
                 <div class='btn-group'>
@@ -46,9 +42,9 @@
                 </div>
             </div>";
 
-    $prevNext = ($_SESSION['vert'] == 0) ? $btn : "";
-    $script = ($_SESSION['vert'] == 0) ? "<script src='js/questTabs.js'></script>" : "<script src='js/layout.js'></script>";
-    $sub = ($_SESSION['vert'] != 0) ? "<input type='submit' class='btn btn-primary mt-3' value='Zatwierdź'>" : "";
+    $prevNext = ($test->testVert == 0) ? $btn : "";
+    $script = ($test->testVert == 0) ? "<script src='../js/questTabs.js'></script>" : "<script src='../js/layout.js'></script>";
+    $sub = ($test->testVert != 0) ? "<input type='submit' class='btn btn-primary mt-3' value='Zatwierdź'>" : "";
 
     ?>
 
@@ -84,24 +80,16 @@
             <article class="container">
                 <form method='post' id='quest'>
                     <?php
-                        $corr = $type = $points = 0;
                         
-                        for ($iter = 0; $iter < $qcount; $iter++) {
+                        for ($i = 0; $i < $qcount; $i++) {
                             $qnum++;
-                            
-                            $qid = $rand[$iter];
-                            
-                            echo "<section class='card mt-5' id='q${iter}'>"; 
+                                                        
+                            echo "<section class='card mt-5' id='q${i}'>"; 
                             require("question_sel.php");
                             echo "</section>";
                             
-                            $_SESSION['ans'][$iter] = array(
-                                "correct" => $corr,
-                                "type" => $type,
-                                "points" => $points
-                            );
                         }
-                        $sub = ($iter == $qcount - 1) ? "<input type='submit' class='btn btn-primary mt-3' value='Zatwierdź'>" : $sub;
+                        $sub = ($i == $qcount - 1) ? "<input type='submit' class='btn btn-primary mt-3' value='Zatwierdź'>" : $sub;
                     ?>
                     <?php echo $prevNext; ?>
                     <section class='form-group' id='sub-grp' style="text-align: center;">

@@ -9,34 +9,36 @@
         header("location: login.php");
         exit;
     }
-    require_once("../config.php");
+    require_once('../config/config.php');
 
     $owner = $_SESSION['id'];
 
-    $sql = mysqli_prepare($link, "SELECT module.name AS module, test.name, created_at, part FROM test, module WHERE module.id=test.module_id AND test.owner=? ORDER BY test.id DESC LIMIT 5");
-    mysqli_stmt_bind_param($sql, 'i', $owner);
-    mysqli_stmt_execute($sql);
-    $res = mysqli_stmt_get_result($sql);
+    $link = dbConnect();
 
-    mysqli_stmt_close($sql);
+    $sql = $link->prepare("SELECT module.name AS module, test.name, created_at, part FROM test, module WHERE module.id=test.module_id AND test.owner=? ORDER BY test.id DESC LIMIT 5");
+    $sql->bind_param('i', $owner);
+    $sql->execute();
+    $res = $sql->get_result();
 
-    $sql1 = mysqli_prepare($link, "SELECT test.name AS test, code, is_open, session.part, closed FROM session, test WHERE test.id=session.test_id AND session.owner=? ORDER BY session.id DESC LIMIT 5");
-    mysqli_stmt_bind_param($sql1, 'i', $owner);
-    mysqli_stmt_execute($sql1);
-    $res1 = mysqli_stmt_get_result($sql1);
+    $sql->close();
 
-    mysqli_stmt_close($sql1);
+    $sql = $link->prepare("SELECT test.name AS test, code, is_open, session.part, closed FROM session, test WHERE test.id=session.test_id AND session.owner=? ORDER BY session.id DESC LIMIT 5");
+    $sql->bind_param('i', $owner);
+    $sql->execute();
+    $res1 = $sql->get_result();
 
-    if ($_SESSION['priv'] == 2) {
-        $sqla = mysqli_query($link, "SELECT COUNT(id) FROM users WHERE priv='0'");
-        $result = mysqli_fetch_array($sqla);
+    $sql->close();
+
+    if ($_SESSION['priv'] == 3) {
+        $sql = $link->query("SELECT COUNT(id) FROM users WHERE priv='0'");
+        $result = $sql->fetch_array();
         $badge = ($result[0] > 0) ? " <span class='badge badge-light'>${result[0]}</span>" : "";
         $btn = "<div class=\"form-group\"><button onclick=\"window.location.href='users/users.php'\" class=\"btn btn-primary\"><span class=\"bi-file-person\"></span> Zarządzaj użytkownikami${badge}</button></div>";
     } else {
         $badge = $btn = "";
     }
 
-    mysqli_close($link);
+    $link->close();
 ?>
 
 <!DOCTYPE html>
@@ -76,7 +78,7 @@
                     <div class="card card-body">
                         <button onclick="window.location.href='test-mgmt/mod.php'" class="btn btn-primary"><span class="bi-card-text"></span> Zarządzaj testami</button>
                         <?php
-                            if (mysqli_num_rows($res) == 0) {
+                            if ($res->num_rows == 0) {
                                 echo '<h5 class="my-5">Wygląda na to, że nie masz jeszcze żadnych testów. Stwórz jakiś!</h5>';
                             } else {
                                 echo '<table class="table">';
@@ -86,7 +88,7 @@
                                     <th>Zarejestrowane podejścia</th>
                                     </thead></tr><tbody>';
 
-                                while ($row = mysqli_fetch_assoc($res)) {
+                                while ($row = $res->fetch_assoc()) {
                                     echo '<tr>
                                     <td>'.$row['module'].' - '.$row['name'].'</td>
                                     <td>'.$row['created_at'].'</td>
@@ -102,7 +104,7 @@
                     <div class="card card-body">
                         <button onclick="window.location.href='session/sessions.php'" class="btn btn-primary"><span class="bi-calendar-week"></span> Zarządzaj sesjami</button>
                         <?php
-                            if (mysqli_num_rows($res1) == 0) {
+                            if ($res1->num_rows == 0) {
                                 echo '<h5 class="my-5">Wygląda na to, że nie masz jeszcze żadnych sesji. Stwórz jakąś!</h5>';
                             } else {
                                 echo '<table class="table">';
@@ -113,7 +115,7 @@
                                     <th>Zarejestrowane podejścia</th>
                                     </thead></tr><tbody>';
 
-                                while ($row1 = mysqli_fetch_assoc($res1)) {
+                                while ($row1 = $res1->fetch_assoc()) {
                                     if ($row1['is_open'] == 1 && empty($row1['closed'])) {
                                         $open = "Otwarta";
                                     } else if (empty($row1['closed'])) {

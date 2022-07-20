@@ -1,6 +1,6 @@
 <?php
     session_start();
-    require_once("../config.php");
+    require_once('../config/config.php');
 
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
@@ -17,42 +17,20 @@
     if (isset($_GET['t'])) {
 
         $sCode = (isset($_GET['s'])) ? $_GET['s'] : $sCode;
+        $testId = argStrip($_GET['t']);
 
-        $_SESSION['test'] = argStrip($_GET['t']);
-        $tid = $_SESSION['test'];
+        $test = test::get($testId);
+        shuffle($test->testQuestions);
 
-        $sql = mysqli_prepare($link, "SELECT module.name AS mn, test.name AS tn FROM module, test WHERE module.id=test.module_id AND test.id=?");
-        mysqli_stmt_bind_param($sql, 'i', $tid);
-        mysqli_stmt_execute($sql);
-        $res = mysqli_stmt_get_result($sql);
-        $tname = mysqli_fetch_assoc($res);
-        
-        $sql = mysqli_prepare($link, "SELECT id, points, quest_type, ans FROM question WHERE test_id=?");
-        mysqli_stmt_bind_param($sql, 'i', $tid);
-        mysqli_stmt_execute($sql);
-        $result = mysqli_stmt_get_result($sql);
-        
-        $i = 0;
-        $j = 0;
-        $arr;
-        while ($row = mysqli_fetch_assoc($result)) {
-            $arr[$i] = $row['id'];
-            $i ++;
-            if ($row['quest_type'] == 2) {
-                $num = strlen($row['ans']);
+        $link = dbConnect();
+        $sql = $link->prepare("SELECT module.name AS mn, test.name AS tn FROM module, test WHERE module.id=test.module_id AND test.id=?");
+        $sql->bind_param('i', $testId);
+        $sql->execute();
+        $res = $sql->get_result();
+        $tname = $res->fetch_assoc();
 
-                $j += ($num * $row['points']);
-            } else {
-                $j += $row['points'];
-            }
-        }
-        $_SESSION['quest_num'] = $i;
-        $_SESSION['maxpoints'] = $j;
-
-        $_SESSION['quest_arr'] = $arr;
-        mysqli_stmt_close($sql);
-
-        $_SESSION['ans'] = array();
+        $sql->close();
+        $link->close();
 
     } 
 
@@ -60,31 +38,28 @@
         if(isset($_POST['start'])) {
             $code = argStrip($_POST['s']);
 
-            $sql = mysqli_prepare($link, "SELECT can_take, vert, time FROM test WHERE id=?");
-            mysqli_stmt_bind_param($sql, 'i', $_SESSION['test']);
-            mysqli_stmt_execute($sql);
-            $result = mysqli_stmt_get_result($sql);
-            $dt = mysqli_fetch_assoc($result);
-
-            if ($dt['can_take'] == 0) {
+            if ($test->testCT == 0) {
 
                 if (!empty($code)) {
-                    $sql = mysqli_prepare($link, "SELECT id, can_laa, is_open, closed FROM session WHERE code=?");
-                    mysqli_stmt_bind_param($sql, 's', $code);
-                    mysqli_stmt_execute($sql);
-                    $res1 = mysqli_stmt_get_result($sql);
+                    $link = dbConnect();
+                    $sql = $link->prepare("SELECT id, can_laa, is_open, closed FROM session WHERE code=?");
+                    $sql->bind_param('s', $code);
+                    $sql->execute();
+                    $res = $sql->get_result();
+
+                    $sql->close();
+                    $link->close();
         
-                    if (mysqli_num_rows($res1) == 0) {
+                    if ($res->num_rows == 0) {
                         $notice = "e-Taki kod sesji nie istnieje!";
                     } else {
-                        $data = mysqli_fetch_assoc($res1);
+                        $data = $res->fetch_assoc();
                         if ($data['is_open'] == 0 && !empty($data['closed'])) {
                             $notice = "e-Sesja się już zakończyła!";
                         } else if ($data['is_open'] == 0) {
                             $notice = "e-Sesja się jeszcze nie rozpoczęła!";
                         } else {
                             $_SESSION['laa'] = $data['can_laa'];
-                            $_SESSION['vert'] = $dt['vert'];
 
                             $_SESSION['sid'] = $data['id'];
     
@@ -92,11 +67,13 @@
                             $_SESSION['lastname'] = argStrip($_POST['l']);
                             $_SESSION['class'] = argStrip($_POST['c']);
     
-                            $_SESSION['finish_time'] = time() + ($_SESSION['quest_num'] * $dt['time']);
+                            $_SESSION['finish_time'] = time() + (count($test->testQuestions) * $test->testTime);
     
                             $_SESSION['ans'] = array();
 
                             $_SESSION['question'] = 0;
+
+                            $_SESSION['test'] = serialize($test);
 
                             header("location: question.php");
                             exit;
@@ -106,60 +83,57 @@
                     $notice = "e-Ten test można rozwiązać tylko w ramach sesji!";
                 }  
             } else if (!empty($code)) {
-                $sql = mysqli_prepare($link, "SELECT id, can_laa, is_open, closed FROM session WHERE code=?");
-                mysqli_stmt_bind_param($sql, 's', $code);
-                mysqli_stmt_execute($sql);
-                $result = mysqli_stmt_get_result($sql);
+                $link = dbConnect();
+                    $sql = $link->prepare("SELECT id, can_laa, is_open, closed FROM session WHERE code=?");
+                    $sql->bind_param('s', $code);
+                    $sql->execute();
+                    $res = $sql->get_result();
 
-                if (mysqli_num_rows($result) == 0) {
-                    $notice = "e-Taki kod sesji nie istnieje!";
-                } else {
-                    $data = mysqli_fetch_assoc($result);
-                    if ($data['is_open'] == 0 && !empty($data['closed'])) {
-                        $notice = "e-Sesja się już zakończyła!";
-                    } else if ($data['is_open'] == 0) {
-                        $notice = "e-Sesja się jeszcze nie rozpoczęła!";
+                    $sql->close();
+                    $link->close();
+        
+                    if ($res->num_rows == 0) {
+                        $notice = "e-Taki kod sesji nie istnieje!";
                     } else {
-                        $_SESSION['laa'] = $data['can_laa'];
-                        $_SESSION['vert'] = $dt['vert'];
+                        $data = $res->fetch_assoc();
+                        if ($data['is_open'] == 0 && !empty($data['closed'])) {
+                            $notice = "e-Sesja się już zakończyła!";
+                        } else if ($data['is_open'] == 0) {
+                            $notice = "e-Sesja się jeszcze nie rozpoczęła!";
+                        } else {
+                            $_SESSION['laa'] = $data['can_laa'];
 
-                        $_SESSION['sid'] = $data['id'];
+                            $_SESSION['sid'] = $data['id'];
+    
+                            $_SESSION['name'] = argStrip($_POST['n']);
+                            $_SESSION['lastname'] = argStrip($_POST['l']);
+                            $_SESSION['class'] = argStrip($_POST['c']);
+    
+                            $_SESSION['finish_time'] = time() + (count($test->testQuestions) * $test->testTime);
+    
+                            $_SESSION['ans'] = array();
 
-                        $_SESSION['name'] = argStrip($_POST['n']);
-                        $_SESSION['lastname'] = argStrip($_POST['l']);
-                        $_SESSION['class'] = argStrip($_POST['c']);
+                            $_SESSION['question'] = 0;
 
-                        $_SESSION['finish_time'] = time() + ($_SESSION['quest_num'] * $dt['time']);
+                            $_SESSION['test'] = serialize($test);
 
-                        $_SESSION['ans'] = array();
-
-                        $_SESSION['question'] = 0;
-
-                        header("location: question.php");
-                        exit;
-                    }
+                            header("location: question.php");
+                            exit;
+                        }
                 }
             } else {
-                $_SESSION['vert'] = $dt['vert'];
 
                 $_SESSION['name'] = argStrip($_POST['n']);
                 $_SESSION['lastname'] = argStrip($_POST['l']);
                 $_SESSION['class'] = argStrip($_POST['c']);
     
-                $_SESSION['finish_time'] = time() + ($_SESSION['quest_num'] * $dt['time']);
-
-                $sql = mysqli_prepare($link, "SELECT can_laa FROM test WHERE id=?");
-                mysqli_stmt_bind_param($sql, 'i', $_SESSION['test']);
-                mysqli_stmt_execute($sql);
-                $res = mysqli_stmt_get_result($sql);
-                mysqli_stmt_close($sql);
-                $data = mysqli_fetch_assoc($res);
-
-                $_SESSION['laa'] = $data['can_laa'];
+                $_SESSION['finish_time'] = time() + (count($test->testQuestions) * $test->testTime);
     
                 $_SESSION['ans'] = array();
 
                 $_SESSION['question'] = 0;
+
+                $_SESSION['test'] = serialize($test);
 
                 header("location: question.php");
                 exit;
@@ -174,8 +148,6 @@
         header('location:summary.php');
         exit;
     }
-
-    mysqli_close($link)
 
 ?>
 
@@ -208,7 +180,7 @@
         <div class="wrapper">
             <div class="container">
                 <h3 class="mt-5 mb-3"><?php echo "${tname['mn']} - ${tname['tn']}";?></h3>
-                <p><?php echo "${_SESSION['quest_num']} pytań, ${_SESSION['maxpoints']} punktów"; ?></p>
+                <p><?php echo count($test->testQuestions)." pytań, ".$test->testPoints." punktów"; ?></p>
                 <form method="post">
                     <h4>Zasady:</h4>
                     <ul id="rules" class="alert alert-info">

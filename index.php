@@ -1,10 +1,11 @@
 <?php
     session_start();
-    require_once('config.php');
-
+    
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
+    
+    require_once('config/config.php');
 
     if (isset($_SESSION['question'])) {
         require_once("tests/unset.php");
@@ -19,11 +20,7 @@
 
     }
 
-    $link2 = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
-
-    $result = $link2->query("SELECT * FROM quotes order by RAND() limit 1");
-    $res = $result->fetch_array();
-    $q = $res[1];
+    $link = dbConnect();
 ?>
 
 <!DOCTYPE html>
@@ -72,11 +69,11 @@
             <p>Wybierz test</p>
             <div class="container-fluid">
             <?php
-                $res1 = $link2->query("SELECT * FROM module");
+                $res1 = $link->query("SELECT * FROM module");
 
-                $sql = mysqli_prepare($link, "SELECT id, name FROM test WHERE module_id=?");
+                $sql = $link->prepare("SELECT id, name FROM test WHERE module_id=?");
 
-                while ($row1 = mysqli_fetch_assoc($res1)) {
+                while ($row1 = $res1->fetch_assoc()) {
                     if (($row1['id']%3) == 1) {
                         echo '<div class="row">';
                     }
@@ -84,12 +81,12 @@
                     echo '<button class="btn btn-primary btn-lg btn-block" data-toggle="collapse" data-target="#mod'.$row1['id'].'" aria-expanded="false" aria-controls="collapseExample">'.$row1['name'].'</button>';
 
                     $mid = $row1['id'];
-                    mysqli_stmt_bind_param($sql, 'i', $mid);
-                    mysqli_stmt_execute($sql);
-                    $res2 = mysqli_stmt_get_result($sql);
+                    $sql->bind_param('i', $mid);
+                    $sql->execute();
+                    $res2 = $sql->get_result();
 
                     echo '<ul id="mod'.$row1['id'].'" class="collapse card card-body">';
-                    while ($row2 = mysqli_fetch_assoc($res2)) {
+                    while ($row2 = $res2->fetch_assoc()) {
                         echo "<li class=\"card card-body mb-2\">
                         <p>${row2['name']}</p>
                             <a href='tests/start.php?t=${row2['id']}' class='btn btn-secondary btn-sm'>Start</a>
@@ -104,32 +101,12 @@
                 }
                 echo '<div class="row"></div>';
 
-                mysqli_stmt_close($sql);
-                mysqli_close($link);
+                $sql->close();
+                $link->close();
             ?>
             </div>
             
         </div>
-         <script>
-            var qv = false;
-            $(".navbar-brand").css('cursor', 'pointer');
-            $(".navbar-brand").click(function() {
-                if (!qv) {
-                    qv = true;
-                    $(".navbar-brand").css('cursor', 'auto');
-
-                    $("<div class='container'><p class='alert alert-info' id='q'></p></div>").insertBefore(".wrapper > :first-child");
-                
-                    $("#q").text('<?php echo $q; ?>');
-                    $("#q").delay(2000).fadeOut(400);
-                    
-                    setTimeout(function() {
-                        qv = false;
-                        $("#q").remove();
-                        $(".navbar-brand").css('cursor', 'pointer');
-                    }, 2500);
-                }
-            });
-         </script>
+         <script src='js/quote.js'></script>
     </body>
 </html>
