@@ -21,10 +21,10 @@
             return $subject;
         }
 
-        public static function set($module, $name) {
+        public static function set($module, $name, $owner) {
             $link = dbConnect();
-            $stmt = $link->prepare("INSERT INTO test (name, module_id) VALUES (?, ?)");
-            $stmt->bind_param('si', $name, $module);
+            $stmt = $link->prepare("INSERT INTO test (name, module_id, owner) VALUES (?, ?, ?)");
+            $stmt->bind_param('sii', $name, $module, $owner);
             $stmt->execute();
 
             $id = $stmt->insert_id;
@@ -91,9 +91,9 @@
         }
 
         // dodaj pytanie
-        public function addQuestion($_content, $_type, $_answer, $_list) {
+        public function addQuestion($_content, $_type, $_answer, $_list, $_points) {
 
-            $this->testQuestions[] = question::set($this->testId, $_content, $_type, $_answer, $_list);
+            $this->testQuestions[] = question::set($this->testId, $_content, $_type, $_answer, $_list, $_points);
 
         }
 
@@ -103,12 +103,7 @@
             $this->testQuestions[$_num]->updateQuestion($_content, $_answer, $_points, $_answers, $_type);
         }
 
-        // zaktualizuj test
-        public function updateTest($_time, $_vert, $_laa, $_ct, $_ql) {
-
-            $_link = dbConnect();
-            $_stmt = $_link->prepare("UPDATE test SET time=?, vert=?, can_laa=?, can_take=? WHERE id=?");
-            $_stmt->bind_param('iiiii', $_time, $_vert, $_laa, $_ct, $this->testId);
+        public function updateQuestions($_ql) {
 
             $content = $answer = "";
             $type = $points = 0;
@@ -117,18 +112,51 @@
             if (count($_ql) < count($this->testQuestions)) array_splice($this->testQuestions, count($_ql), count($this->testQuestions) - count($_ql));
             for ($i = 0; $i < count($_ql); $i++) {
 
-                $question = $_ql[$i];
+                $question = $_ql[$i + 1];
 
                 $content = $question['content'];
-                $answer = $question['answer'];
                 $type = $question['type'];
+                $answer = ($type == 2) ? concArray($question['answer']) : $question['answer'];
                 $points = $question['points'];
-                $answers = $question['answers'];
+                $answers = ($type == 3) ? array() : $question['answers'];
 
                 if ($this->testQuestions[$i] instanceof question) $this->updateQuestion($i + 1, $content, $answer, $points, $answers, $type);
-                else $this->addQuestion($content, $type, $answer, $answers); 
+                else $this->addQuestion($content, $type, $answer, $answers, $points); 
 
             }
+
+        }
+
+        // zaktualizuj test
+        public function updateTest($_time, $_vert, $_laa, $_ct) {
+
+            $_link = dbConnect();
+            $_stmt = $_link->prepare("UPDATE test SET time=?, vert=?, can_laa=?, can_take=? WHERE id=?");
+            $_stmt->bind_param('iiiii', $_time, $_vert, $_laa, $_ct, $this->testId);
+            $_stmt->execute();
+
+            $_stmt->close();
+            $_link->close();
+
+            $this->testTime = $_time;
+            $this->testVert = $_vert;
+            $this->testLAA = $_laa;
+            $this->testCT = $_ct;
+
+        }
+
+        public function setName($_name) {
+
+            $_link = dbConnect();
+            $_stmt = $_link->prepare("UPDATE test SET name=? WHERE id=?");
+            $_stmt->bind_param('si', $_name, $this->testId);
+            $_stmt->execute();
+
+            $_stmt->close();
+            $_link->close();
+
+            $this->testName = $_name;
+
         }
 
          // usuń test
