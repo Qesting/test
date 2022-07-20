@@ -8,54 +8,43 @@
     require_once('../../config/config.php');
 
     $notice = $notice_class = "";
+
+    $link = dbConnect();
     
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (!empty($_POST['name'])) {
-            $sql = "SELECT MAX(id) FROM test";
-            $res = mysqli_query($link, $sql);
-            $data = mysqli_fetch_array($res);
-            
-            $id = $data[0] + 1;
             $mid = $_SESSION['module_id'];
             $name = argStrip($_POST['name']);
             $uid = $_SESSION['id'];
             
-            $qry = "INSERT INTO test (id, module_id, name, owner) VALUES (?, ?, ?, ?)";
-            $sql = mysqli_prepare($link, $qry);
-            mysqli_stmt_bind_param($sql, 'iisi', $id, $mid, $name, $uid);
-            mysqli_stmt_execute($sql);
-    
-            $sql = "SELECT MAX(id) FROM test";
-            $res = mysqli_query($link, $sql);
-            $data = mysqli_fetch_array($res);
-    
-            $_SESSION['test_id'] = $data[0];
+            $test = test::set($mid, $name, $uid);
+            $_SESSION['edit_test'] = serialize($test);
             
             $_SESSION['notice'] = "s-Pomyślnie dodano test!";
             
-            $_POST = [];
+            $_POST = array();
 
-            $sql1 = "SELECT name, owner FROM test WHERE id=".$_SESSION['test_id'];
-            $res1 = mysqli_query($link, $sql1);
-            $data = mysqli_fetch_assoc($res1);
-            
-            $_SESSION['test_name'] = $data['name'];
             header("location: quest.php");
             exit;
         } else if (!empty($_POST['id'])) {
-            $_SESSION['test_id'] = argStrip($_POST['id']);
+            $tid = argStrip($_POST['id']);
 
-            $sql1 = "SELECT name, owner FROM test WHERE id=".$_SESSION['test_id'];
-            $res1 = mysqli_query($link, $sql1);
-            $data = mysqli_fetch_assoc($res1);
+            $sql = $link->prepare("SELECT owner FROM test WHERE id=?");
+            $sql->bind_param('i', $tid);
+            $sql->execute();
+            $data = $sql->get_result()->fetch_assoc();
+
+            $sql->close();
+
+            $test = test::get($tid);
             
-            if ($data['owner'] != $_SESSION['id'] && $_SESSION['priv'] != 2) {
-                unset($_SESSION['test_id']);
-                $_SESSION['error'] = "e-Tylko właściciel testu może go modyfikować.";
-                $_SESSION['error_class'] = ' class="alert alert-danger"';
+            if ($data['owner'] != $_SESSION['id'] && $_SESSION['priv'] != 3) {
+                $_SESSION['notice'] = "e-Tylko właściciel testu może go modyfikować.";
             } else {
-                $_SESSION['test_name'] = $data['name'];
                 $_SESSION['notice'] = "s-Pomyślnie załadowano test!";
+
+                $_SESSION['edit_test'] = serialize($test);
+                
                 header("location: quest.php");
                 exit;
             }
@@ -64,16 +53,25 @@
         } 
     }
 
-    
     showNot();
 
-    $sql = "SELECT name FROM module WHERE id=".$_SESSION['module_id'];
-    $res = mysqli_query($link, $sql);
-    $data = mysqli_fetch_assoc($res);
+    $sql = $link->prepare("SELECT name FROM module WHERE id=?");
+    $sql->bind_param('i', $_SESSION['module_id']);
+    $sql->execute();
+    $res = $sql->get_result();
+
+    $sql->close();
+
+    $data = $res->fetch_assoc();
     $_SESSION['module_name'] = $data['name'];
 
-    $sql1 = "SELECT * FROM test WHERE module_id=".$_SESSION['module_id'];
-    $res1 = mysqli_query($link, $sql1);
+    $sql = $link->prepare("SELECT * FROM test WHERE module_id=?");
+    $sql->bind_param('i', $_SESSION['module_id']);
+    $sql->execute();
+    $res = $sql->get_result();
+
+    $sql->close();
+    $link->close();
     
 ?>
 
@@ -111,8 +109,8 @@
                         <select name="id" class="form-control">
                             <option value="">--Wybierz opcję--</option>
                             <?php
-                                if(mysqli_num_rows($res1) > 0) {
-                                    while ($row = mysqli_fetch_assoc($res1)) {
+                                if($res->num_rows > 0) {
+                                    while ($row = $res->fetch_assoc()) {
                                         echo '<option value="'.$row['id'].'">'.$row['name'].'</option>';
                                     }
                                 }
