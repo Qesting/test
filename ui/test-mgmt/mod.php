@@ -13,30 +13,26 @@
 
     $notice = $notice_class = "";
 
-    
+    $link = dbConnect();
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (!empty($_POST['name'])) {
             $name = argStrip($_POST['name']);
             
-            $sql = "SELECT MAX(id) FROM module";
-            $res = mysqli_query($link, $sql);
-            $data = mysqli_fetch_array($res);
+            $res = $link->query("SELECT MAX(id) FROM module");
             
-            $id = $data[0] + 1;
+            $id = $res->fetch_array()[0] + 1;
             
-            $qry = "INSERT INTO module VALUES (?, ?)";
-            $sql = mysqli_prepare($link, $qry);
-            mysqli_stmt_bind_param($sql, 'is', $id, $name);
-            mysqli_stmt_execute($sql);
-            
-            $sql = "SELECT MAX(id) FROM module";
-            $res = mysqli_query($link, $sql);
-            $data = mysqli_fetch_array($res);
+            $sql = $link->prepare("INSERT INTO module VALUES (?, ?)");
+            $sql->bind_param('is', $id, $name);
+            $sql->execute();
     
-            $_SESSION['module_id'] = $data[0];
+            $_SESSION['module_id'] = $sql->insert_id;
+
+            $sql->close();
             
             $_SESSION['notice'] = "s-Pomyślnie dodano moduł!";
-            $_POST = [];
+            $_POST = array();
             header("location: test.php");
             exit;
             
@@ -53,8 +49,9 @@
 
     showNot();
     
-    $sql = "SELECT * FROM module";
-    $result = mysqli_query($link, $sql);
+    $result = $link->query("SELECT * FROM module");
+
+    $link->close();
 ?>
 
 <!DOCTYPE html>
@@ -88,8 +85,8 @@
                         <select name="id" class="form-control">
                             <option value="">--Wybierz opcję--</option>
                             <?php
-                                if(mysqli_num_rows($result) > 0) {
-                                    while ($row = mysqli_fetch_assoc($result)) {
+                                if($result->num_rows > 0) {
+                                    while ($row = $result->fetch_assoc()) {
                                         echo '<option value="'.$row['id'].'">'.$row['name'].'</option>';
                                     }
                                 }
