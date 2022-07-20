@@ -48,15 +48,11 @@
      *
      * @return void
      */
-    function argStrip(?string $formData) :string {
+    function argStrip(string|array|null $formData) :string|array {
         $res = "";
         if (is_array($formData)) { // jeżeli argument jest tablicą, każdy jej element zostanie przepuszczony przez funkcję
-            $i = 0;
             $res = array();
-            foreach($formData as $val) {
-                $res[$i] = argStrip($val);
-                $i++;
-            }
+            foreach($formData as $key => $val) $res[$key] = argStrip($val);
         } else {
             $res = htmlspecialchars(stripslashes(trim($formData)));
         }
@@ -76,7 +72,7 @@
         $result = "";
         if (is_array($arr)) {
             foreach ($arr as $val) {
-                $result .= (is_array($val)) ? concArray($val) : $separator . argStrip($val);
+                $result .= (is_array($val)) ? concArray($val) : argStrip($val).$separator;
             }
         }
         return $result;
