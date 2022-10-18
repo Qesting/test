@@ -49,3 +49,29 @@ form#quest .form-group {
     text-align: left;
 }
 
+body {
+    --radius: 0.75rem;
+}
+
+#container-test {
+    border-top-left-radius: var(--radius);
+    border-bottom-left-radius: var(--radius);
+}
+
+#container-article {
+    border-top-right-radius: var(--radius);
+    border-bottom-right-radius: var(--radius);
+}
+
+@media screen and (max-width: 768px) {
+    #container-test {
+        border-radius: var(--radius);
+    }
+    #container-article {
+        border-radius: var(--radius);
+    }
+}
+
+#container-issues {
+    border-radius: var(--radius);
+}
