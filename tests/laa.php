@@ -132,7 +132,8 @@
                 </article>
             </main>
             <footer class='pb-5 px-5'>
-                <a href='../index.php' class='btn btn-primary'>Powrót do strony głównej</a>
+                <a href='../' class='btn btn-primary'><i class='bi-house-fill'></i> Strona główna</a>
+                <a href='.' class='btn btn-primary'><i class='bi-house-fill'></i> Lista testów</a>
             </footer>
         </div>
     </body>
