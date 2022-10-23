@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteCond %{REQUEST_URI} /\d+$
+RewriteRule (\d+)$ ./article.php?id=$1
