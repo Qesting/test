@@ -20,7 +20,7 @@ $(".navbar-brand").click(function() {
         qv = true;
         $(".navbar-brand").css('cursor', 'auto');
         
-        $("<div class='container'><p class='alert alert-info' id='q'></p></div>").insertBefore(".wrapper > :first-child");
+        $("<div class='container'><p style='text-align: center' class='alert alert-info' id='q'></p></div>").insertBefore(".wrapper > :first-child");
         
         $("#q").text(content);
         $("#q").delay(2000).fadeOut(400);
