@@ -1,5 +1,7 @@
 <?php
 
+    session_start();
+
     if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['test'])) {
 
         $testArgs = "t=${_GET['test']}";
@@ -25,6 +27,16 @@
             }
             .row { margin-top: -20px; }
             .row > * { margin-top: 20px; }
+            
+            @media screen and (min-width: 768px) {
+                h4 + div > p {height: 8rem}
+            }
+            @media screen and (min-width: 992px) {
+                h4 + div > p {height: 6rem}
+            }
+            @media screen and (min-width: 1200px) {
+                h4 + div > p {height: 4rem}
+            }
         </style>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -37,13 +49,12 @@
                 <a class="navbar-brand"><b>T</b>ESTOPOL</a>
                 <div class="collapse navbar-collapse">
                     <div class="navbar-nav ms-auto">
-                        <a class='nav-item nav-link active' href='..'>Do strony głównej</a>
-                        <?php if(!isset($_SESSION["loggedin"]) || !$_SESSION["loggedin"]): ?>
+                        <?php if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true): ?>
                             <a class='nav-item nav-link active' href='ui/login.php'>Zaloguj się</a>
                             <a class='nav-item nav-link active' href='ui/register.php'>Zarejestruj się</a>
                         <?php else: ?>
                             <span class='nav-item nav-link active'>Witaj, <b><?php echo $_SESSION['username'] ?></b></span>
-                            <a class='nav-item nav-link active' href='ui/userpage.php'><u>Strona użytkownika</u></a>
+                            <a class='nav-item nav-link active' href='ui/userpage.php'><i class='bi-person-circle'></i> Strona użytkownika</a>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -74,7 +85,7 @@
                     <div class='col-md-6 p-3 bg-secondary' id='container-article'>
                         <h4 class='mb-4'>Materiały <span class='bi-journal-text'></span></h4>
                         <div>
-                            <p>Materiały do nauki, czyli system tworzenia i przeglądania artykułów. Możliwość oznaczenia artykułu jako materiał powtórzeniowy dla konkretnego testu. Formatowanie oparte jest na języku Markdown.</p>
+                            <p>Materiały do nauki, czyli system tworzenia i przeglądania artykułów. Formatowanie oparte jest na języku Markdown.</p>
                             <a class='btn btn-primary' href='article'>Zobacz materiały</a>
                         </div>
                         <div class='mt-5'>
