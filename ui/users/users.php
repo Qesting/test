@@ -64,8 +64,8 @@
             <a class="navbar-brand"><b>T</b>ESTOPOL</a>
                 <div class="collapse navbar-collapse">
                     <div class="navbar-nav ms-auto">
-                        <a class="nav-item nav-link active" href='../userpage.php'>Powrót do strony użytkownika</a>
-                        <a class="nav-item nav-link active" href='/index.php'>Powrót do strony głównej</a>
+                        <a class="nav-item nav-link active" href='../userpage.php'><i class='bi-person-circle'></i> Strona użytkownika</a>
+                        <a class="nav-item nav-link active" href='/index.php'><i class='bi-house-fill'></i> Strona główna</a>
                     </div>
                 </div>
             </div>
@@ -122,7 +122,7 @@
                                 <option value="2" '.$sel3.'>Użytkownik</option>
                                 <option value="3" '.$sel4.'>Administrator</option>
                                 </select>
-                                <input type="submit" value="Zatwierdź" class="btn btn-outline-primary btn-sm">
+                                <button type="submit" class="btn btn-outline-primary btn-sm">Zatwierdź</button>
                                 </div></form></td>
                                 </tr>';
                             }

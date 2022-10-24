@@ -19,7 +19,7 @@ $("#next").click(function() {
         
         atab = newTab;
         if (atab == num && $("#sub-grp > *").length == 0) {
-            $("#sub-grp").append("<button type='submit' class='btn btn-primary'>Zatwierdź</button>");
+            $("#sub-grp").append("<button type='submit' class='btn btn-primary mt-3' ><i class='bi-check'></i> Zakończ test</button>");
         }
     } else {
         $("#alert").text("To już ostatnie pytanie!").addClass("alert alert-warning");

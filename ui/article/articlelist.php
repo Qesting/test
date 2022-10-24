@@ -36,6 +36,7 @@ $arts = Article::getByOwner($_SESSION['id']);
             <a class="navbar-brand"><b>T</b>ESTOPOL</a>
                 <div class="collapse navbar-collapse">
                     <div class="navbar-nav ms-auto">
+                        <a class="nav-item nav-link active" href='articles.php'><i class='bi-journal-text'></i> Materiały</a>
                         <a class="nav-item nav-link active" href='../userpage.php'><i class='bi-person-circle'></i> Strona użytkownika</a>
                         <a class="nav-item nav-link active" href='../../index.php'><i class='bi-house-fill'></i> Strona główna</a>
                     </div>
@@ -61,8 +62,10 @@ $arts = Article::getByOwner($_SESSION['id']);
                                     <?php endif ?>
                                 </div>
                                 <div class='card-body'>
-                                    <a class='btn btn-danger' href='articledel.php?a=<?php echo $art->id ?>'><i class='bi-trash-fill'></i> Usuń</a>
-                                    <a class='btn btn-primary' href='write.php?a=<?php echo $art->id ?>'><i class='bi-pencil-square'></i> Edytuj</a>
+                                    <div class='btn-group'>
+                                        <a class='btn btn-danger' href='articledel.php?a=<?php echo $art->id ?>'><i class='bi-trash-fill'></i> Usuń</a>
+                                        <a class='btn btn-primary' href='write.php?a=<?php echo $art->id ?>'><i class='bi-pencil-square'></i> Edytuj</a>
+                                    </div>
                                 </div>
                             </div>
                         <?php endforeach ?>

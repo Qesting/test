@@ -14,7 +14,7 @@
 ?>
 
 <!DOCTYPE html>
-<html leng='pl-Pl'>
+<html lang='pl-Pl'>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -50,8 +50,8 @@
                 <div class="collapse navbar-collapse">
                     <div class="navbar-nav ms-auto">
                         <?php if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true): ?>
-                            <a class='nav-item nav-link active' href='ui/login.php'>Zaloguj się</a>
-                            <a class='nav-item nav-link active' href='ui/register.php'>Zarejestruj się</a>
+                            <a class='nav-item nav-link active' href='ui/login.php'><i class='bi-person-check-fill'></i> Zaloguj się</a>
+                            <a class='nav-item nav-link active' href='ui/register.php'><i class='bi-person-plus-fill'></i> Zarejestruj się</a>
                         <?php else: ?>
                             <span class='nav-item nav-link active'>Witaj, <b><?php echo $_SESSION['username'] ?></b></span>
                             <a class='nav-item nav-link active' href='ui/userpage.php'><i class='bi-person-circle'></i> Strona użytkownika</a>
@@ -59,7 +59,6 @@
                     </div>
                 </div>
                 <div class="text-right pl-3"></div>
-            </div>
             </div>
         </nav>
         <div class="wrapper">
@@ -98,7 +97,7 @@
         <footer class='bg-primary text-light text-center fixed-bottom'>
             <div class='container p-4 pb-0'>
                 <div class='mb-3'>
-                    <p>Trafiłeś/aś na jakiś błąd w działaniu aplikacji? <u><a class='text-light' href='https://github.com/Qesting/test/issues' target='_blank'>Skontaktuj się z nami</a></u></p>
+                    <p>Trafiłeś/aś na jakiś błąd w działaniu aplikacji? <a class='text-light' href='https://github.com/Qesting/test/issues' target='_blank'><i class='bi-envelope-fill'></i> Skontaktuj się z nami</a></p>
                 </div>
             </div>
         </footer> 

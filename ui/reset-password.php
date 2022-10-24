@@ -68,39 +68,71 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $link->close();
 }
 ?>
- 
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Resetowanie hasła</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        body{ font: 14px sans-serif; }
-        .wrapper{ width: 360px; padding: 20px; }
-    </style>
-</head>
-<body>
-    <div class="wrapper">
-        <h2>Zresetuj hasło</h2>
-        <p>Wypełnij formularz aby zresetować hasło.</p>
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post"> 
-            <div class="form-group">
-                <label>Nowe hasło</label>
-                <input type="password" name="new_password" class="form-control <?php echo (!empty($new_password_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_password; ?>">
-                <span class="invalid-feedback"><?php echo $new_password_err; ?></span>
+<html lang='pl-Pl'>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Logowanie | testopol</title>
+        <link rel="stylesheet" href="../style/main.css">
+        <style>
+            body{
+                font: 14px sans-serif;
+                margin-bottom: 120px;
+                text-align: center;
+            }
+            #reset {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            @media screen and (min-width: 768px) {
+                #reset {
+                    width: 80%;
+                }
+            }
+            @media screen and (min-width: 992px) {
+                #reset {
+                    width: 60%;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand navbar-dark bg-primary">
+            <div class="container-fluid">
+                <a class="navbar-brand"><b>T</b>ESTOPOL</a>
+                <div class="collapse navbar-collapse">
+                    <div class="navbar-nav ms-auto">
+                        <a class='nav-item nav-link-active' href='../'><i class='bi-house-fill'></i> Strona główna</a>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Powtórz hasło</label>
-                <input type="password" name="confirm_password" class="form-control <?php echo (!empty($confirm_password_err)) ? 'is-invalid' : ''; ?>">
-                <span class="invalid-feedback"><?php echo $confirm_password_err; ?></span>
+        </nav>
+        <div class="wrapper">
+            <div class='container my-3'>
+                <div class='text-center'>
+                    <h2 class='my-5'>Zresetuj hasło</h2>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="submit" class="btn btn-primary" value="Zatwierdź">
-                <a class="btn btn-link ml-2" href="userpage.php">Anuluj</a>
+            <div class='container'>
+                <form method="post" id='reset'>
+                    <div class="form-group">
+                        <label>Nowe hasło</label>
+                        <input type="password" name="new_password" class="form-control <?php echo (!empty($new_password_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $new_password; ?>">
+                        <span class="invalid-feedback"><?php echo $new_password_err; ?></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Powtórz hasło</label>
+                        <input type="password" name="confirm_password" class="form-control <?php echo (!empty($confirm_password_err)) ? 'is-invalid' : ''; ?>">
+                        <span class="invalid-feedback"><?php echo $confirm_password_err; ?></span>
+                    </div>
+                    <div class="form-group">
+                        <div class='btn-group'>
+                            <button type="submit" class="btn btn-primary" ><i class='bi-check'></i> Zresetuj hasło</button>
+                            <a class='btn btn-danger' href='userpage.php'><i class='bi-x'></i> Anuluj</a>
+                        </div>
+                    </div>
+                </form>
             </div>
-        </form>
-    </div>    
-</body>
+    </body>
 </html>

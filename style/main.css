@@ -26,7 +26,11 @@ nav .navbar-brand {
     margin-right: 1rem;
 }
 
-form:not(.left) input[type="text"], form:not(.left) select, form:not(.left) input[type="number"] {
+nav a:hover, nav a:focus {
+    text-decoration: none !important;
+}
+
+form:not(.left) input[type="text"], form:not(.left) input[type=password], form:not(.left) select, form:not(.left) input[type="number"] {
     text-align: center;
 }
 

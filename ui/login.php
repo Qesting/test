@@ -93,47 +93,75 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $link->close();
 }
 ?>
- 
 <!DOCTYPE html>
-<html lang="pl-PL">
-<head>
-    <meta charset="UTF-8">
-    <title>Zaloguj</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body{ font: 14px sans-serif; }
-        .wrapper{ width: 360px; padding: 20px; }
-    </style>
-</head>
-<body>
-    <div class="wrapper">
-        <h2>Logowanie</h2>
-        <p>Proszę podać poświadczenia.</p>
-
-        <?php 
-        if(!empty($login_err)){
-            echo '<div class="alert alert-danger">' . $login_err . '</div>';
-        }        
-        ?>
-
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-            <div class="form-group">
-                <label>Nazwa użytkownika</label>
-                <input type="text" name="username" class="form-control <?php echo (!empty($username_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $username; ?>">
-                <span class="invalid-feedback"><?php echo $username_err; ?></span>
-            </div>    
-            <div class="form-group">
-                <label>Hasło</label>
-                <input type="password" name="password" class="form-control <?php echo (!empty($password_err)) ? 'is-invalid' : ''; ?>">
-                <span class="invalid-feedback"><?php echo $password_err; ?></span>
+<html lang='pl-Pl'>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Logowanie | testopol</title>
+        <link rel="stylesheet" href="../style/main.css">
+        <style>
+            body{
+                font: 14px sans-serif;
+                margin-bottom: 120px;
+                text-align: center;
+            }
+            #login {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            @media screen and (min-width: 768px) {
+                #login {
+                    width: 80%;
+                }
+            }
+            @media screen and (min-width: 992px) {
+                #login {
+                    width: 60%;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand navbar-dark bg-primary">
+            <div class="container-fluid">
+                <a class="navbar-brand"><b>T</b>ESTOPOL</a>
+                <div class="collapse navbar-collapse">
+                    <div class="navbar-nav ms-auto">
+                        <a class='nav-item nav-link-active' href='../'><i class='bi-house-fill'></i> Strona główna</a>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="submit" class="btn btn-primary" value="Zaloguj">
+        </nav>
+        <div class="wrapper">
+            <div class='container my-3'>
+                <div class='text-center'>
+                    <h2 class='text-uppercase'>Zaloguj</h2>
+                </div>
             </div>
-            <p>Nie masz jeszcze konta? <a href="register.php">Zarejestruj się</a>.</p>
-            <p><a href="../index.php">Powrót do strony głównej.</a></p>
-        </form>
-    </div>
-</body>
+            <div class='container'>
+                <?php 
+                    if(!empty($login_err)){
+                        echo '<div class="alert alert-danger">' . $login_err . '</div>';
+                    }        
+                ?>
+
+                <form method="post" id='login'>
+                    <div class="form-group">
+                        <label>Nazwa użytkownika</label>
+                        <input type="text" name="username" class="form-control <?php echo (!empty($username_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $username; ?>">
+                        <span class="invalid-feedback"><?php echo $username_err; ?></span>
+                    </div>    
+                    <div class="form-group">
+                        <label>Hasło</label>
+                        <input type="password" name="password" class="form-control <?php echo (!empty($password_err)) ? 'is-invalid' : ''; ?>">
+                        <span class="invalid-feedback"><?php echo $password_err; ?></span>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary" ><i class='bi-person-check-fill'></i> Zaloguj</button>
+                    </div>
+                    <p>Nie masz jeszcze konta? <a href="register.php">Zarejestruj się</a>.</p>
+                </form>
+            </div>
+    </body>
 </html>

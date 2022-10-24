@@ -1,4 +1,8 @@
 <?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
     session_start();
 
     if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
@@ -49,12 +53,12 @@
         $sql = $link->prepare("SELECT id FROM session WHERE code=?");
         $sql->bind_param('s', $code);
         $sql->execute();
-        $num = $sql->num_rows;
+        $num = $sql->get_result()->num_rows;
 
         $num = (empty($num)) ? 0 : $num;
     } while ($num != 0);
 
-    $sql = $link->query("SELECT test.id, module.name, test.name FROM test, module WHERE module.id=test.module_id");
+    $res = $link->query("SELECT test.id, module.name, test.name FROM test, module WHERE module.id=test.module_id");
 
     showNot();
 ?>
@@ -68,6 +72,20 @@
         <link rel="stylesheet" href="../../style/main.css">
         <style>
             body{ font: 14px sans-serif; text-align: center;}
+            #sess {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            @media screen and (min-width: 768px) {
+                #sess {
+                    width: 80%;
+                }
+            }
+            @media screen and (min-width: 992px) {
+                #sess {
+                    width: 60%;
+                }
+            }
         </style>
     </head>
     <body>
@@ -76,8 +94,9 @@
             <a class="navbar-brand"><b>T</b>ESTOPOL</a>
                 <div class="collapse navbar-collapse">
                     <div class="navbar-nav ms-auto">
-                        <a class="nav-item nav-link active" href='../userpage.php'>Powrót do strony użytkownika</a>
-                        <a class="nav-item nav-link active" href='../../index.php'>Powrót do strony głównej</a>
+                        <a class="nav-item nav-link active" href='sessions.php'><i class='bi-calendar-week'></i> Sesje</a>
+                        <a class="nav-item nav-link active" href='../userpage.php'><i class='bi-person-circle'></i> Strona użytkownika</a>
+                        <a class="nav-item nav-link active" href='/index.php'><i class='bi-house-fill'></i> Strona główna</a>
                     </div>
                 </div>
             </div>
@@ -85,7 +104,7 @@
         <div class="wrapper">
             <div class="container">
                 <h2 class="my-5">Tutaj możesz dodać sesję</h2>
-                <form method="post" name="sessform">
+                <form method="post" name="sessform" id='sess'>
                     <div class="form-group">
                         <label for="code" class="form-label">Kod sesji (unikalny, wybrany automatycznie)</label>
                         <input id="code" class="form-control" type="text" name="code" value="<?php echo $code; ?>" readonly>
@@ -107,8 +126,8 @@
                     </div>
                     <div class="form-group">
                         <div class="btn-group">
-                            <input type="button" onclick="window.location.href='sessions.php'" class="btn btn-secondary" value="Powrót">
-                            <input type="submit" class="btn btn-primary" value="Stwórz sesję">
+                            <a href='sessions.php' class="btn btn-secondary"><i class='bi-arrow-left'></i> Powrót</a>
+                            <button type="submit" class="btn btn-primary"><i class='bi-calendar-plus'></i> Stwórz sesję</button>
                         </div>
                     </div>
                 </form>

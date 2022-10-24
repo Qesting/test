@@ -15,7 +15,7 @@
 
         <?php
         
-        if (is_null($question->questionImgPath)) {
+        if (is_null($question->questionImgPath) || empty($question->questionImgPath)) {
             
         } else {
             echo '<img class="rounded w" src="./../usermedia/'.$question->questionImgPath.'">';

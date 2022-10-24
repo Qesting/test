@@ -24,7 +24,11 @@
 
     if ($_SERVER["REQUEST_METHOD"] == "GET") {
         if (isset($_GET['index'])) {
-            header("location: ../index.php");
+            if ($_GET['index'] == 1) {
+                header("location: ../");
+            } else if ($_GET['index'] == 2) {
+                header("location: .");
+            } 
             exit;
         }
     }

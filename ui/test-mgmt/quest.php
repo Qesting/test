@@ -56,9 +56,9 @@
             <a class="navbar-brand"><b>T</b>ESTOPOL</a>
                 <div class="collapse navbar-collapse">
                     <div class="navbar-nav ms-auto">
-                        <a class="nav-item nav-link active" href='test.php'>Powrót do wyboru testu</a>
-                        <a class="nav-item nav-link active" href='../userpage.php'>Powrót do strony użytkownika</a>
-                        <a class="nav-item nav-link active" href='../../index.php'>Powrót do strony głównej</a>
+						<a class="nav-item nav-link active" href='test.php'><i class='bi-card-text'></i> Test</a>
+                        <a class="nav-item nav-link active" href='../userpage.php'><i class='bi-person-circle'></i> Strona użytkownika</a>
+                        <a class="nav-item nav-link active" href='/index.php'><i class='bi-house-fill'></i> Strona główna</a>
                     </div>
                 </div>
             </div>
@@ -172,7 +172,7 @@
 							<button id='testmod' type='button' class="btn btn-secondary"><span class='bi-pencil-square'></span> Modyfikuj test</button>
 							<button id='testimg' type='button' class="btn btn-secondary"><span class='bi-card-image'></span> Dodaj obraz</button>
 							<button type='submit' class='btn btn-primary'><span class='bi-save2'></span> Zapisz zmiany</button>
-							<button id="testdel" type='button' class="btn btn-danger"><span class='bi-bookmark-dash'></span> Usuń bieżący test</button>
+							<button id="testdel" type='button' class="btn btn-danger"><span class='bi-trash'></span> Usuń bieżący test</button>
 						</div>
 					</div>
 				</form>

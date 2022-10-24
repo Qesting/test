@@ -107,7 +107,6 @@
                 </div>
                 <div class="text-right pl-3"></div>
             </div>
-            </div>
         </nav>
         <div class="wrapper mt-5">
             <div class='container'>
