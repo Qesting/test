@@ -92,46 +92,78 @@
         $link->close();
     }
 ?>
- 
 <!DOCTYPE html>
-<html lang="pl-PL">
-<head>
-    <meta charset="UTF-8">
-    <title>Zarejestruj</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="../style/main.css">
-    <style>
-        body{ font: 14px sans-serif; }
-        .wrapper{ width: 360px; padding: 20px; }
-    </style>
-</head>
-<body>
-    <div class="wrapper">
-        <h2>Rejestracja</h2>
-        <p>Wypełnij formularz aby stworzyć konto.</p>
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-            <div class="form-group">
-                <label>Nazwa użytkownika</label>
-                <input type="text" name="username" class="form-control <?php echo (!empty($username_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $username; ?>">
-                <span class="invalid-feedback"><?php echo $username_err; ?></span>
-            </div>    
-            <div class="form-group">
-                <label>Hasło</label>
-                <input type="password" name="password" class="form-control <?php echo (!empty($password_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $password; ?>">
-                <span class="invalid-feedback"><?php echo $password_err; ?></span>
+<html lang='pl-Pl'>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Rejestracja | testopol</title>
+        <link rel="stylesheet" href="../style/main.css">
+        <style>
+            body{
+                font: 14px sans-serif;
+                margin-bottom: 120px;
+                text-align: center;
+            }
+            #register {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            @media screen and (min-width: 768px) {
+                #register {
+                    width: 80%;
+                }
+            }
+            @media screen and (min-width: 992px) {
+                #register {
+                    width: 60%;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand navbar-dark bg-primary">
+            <div class="container-fluid">
+                <a class="navbar-brand"><b>T</b>ESTOPOL</a>
+                <div class="collapse navbar-collapse">
+                    <div class="navbar-nav ms-auto">
+                        <a class='nav-item nav-link-active' href='../'><i class='bi-house-fill'></i> Strona główna</a>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Powtórz hasło</label>
-                <input type="password" name="confirm_password" class="form-control <?php echo (!empty($confirm_password_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $confirm_password; ?>">
-                <span class="invalid-feedback"><?php echo $confirm_password_err; ?></span>
+        </nav>
+        <div class="wrapper">
+            <div class='container my-3'>
+                <div class='text-center'>
+                    <h2 class='text-uppercase'>Zarejestruj się</h2>
+                    <p>Wypełnij formularz aby stworzyć konto</p>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="submit" class="btn btn-primary" value="Zarejestruj">
-                <input type="reset" class="btn btn-secondary ml-2" value="Resetuj">
+            <div class='container'>
+                <form method="post" id='register'>
+                    <div class="form-group">
+                        <label>Nazwa użytkownika</label>
+                        <input type="text" name="username" class="form-control <?php echo (!empty($username_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $username; ?>">
+                        <span class="invalid-feedback"><?php echo $username_err; ?></span>
+                    </div>    
+                    <div class="form-group">
+                        <label>Hasło</label>
+                        <input type="password" name="password" class="form-control <?php echo (!empty($password_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $password; ?>">
+                        <span class="invalid-feedback"><?php echo $password_err; ?></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Powtórz hasło</label>
+                        <input type="password" name="confirm_password" class="form-control <?php echo (!empty($confirm_password_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $confirm_password; ?>">
+                        <span class="invalid-feedback"><?php echo $confirm_password_err; ?></span>
+                    </div>
+                    <div class="form-group">
+                        <div class='btn-group'>
+                            <button type="submit" class="btn btn-primary"><i class='bi-person-plus-fill'></i> Zarejestruj się</button>
+                            <button type="reset" class="btn btn-secondary"><i class='bi-arrow-clockwise'></i> Resetuj</button>
+                        </div>
+                    </div>
+                    <p>Masz już konto? <a href="login.php">Zaloguj się tutaj</a>.</p>
+                </form>
             </div>
-            <p>Masz już konto? <a href="login.php">Zaloguj się tutaj</a>.</p>
-            <p><a href="../index.php">Powrót do strony głównej.</a></p>
-        </form>
-    </div>    
-</body>
+    </body>
 </html>

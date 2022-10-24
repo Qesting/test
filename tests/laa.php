@@ -8,7 +8,7 @@
     require_once('../config/config.php');
 
     if (!isset($_SESSION['question'])) {
-        header("location: ../index.php");
+        header("location: .");
     }
 
 ?>
@@ -132,8 +132,10 @@
                 </article>
             </main>
             <footer class='pb-5 px-5'>
-                <a href='../' class='btn btn-primary'><i class='bi-house-fill'></i> Strona główna</a>
-                <a href='.' class='btn btn-primary'><i class='bi-house-fill'></i> Lista testów</a>
+                <div class='btn-group'>
+                    <a href='../' class='btn btn-primary'><i class='bi-house-fill'></i> Strona główna</a>
+                    <a href='.' class='btn btn-primary'><i class='bi-card-text'></i> Testy</a>
+                </div>
             </footer>
         </div>
     </body>

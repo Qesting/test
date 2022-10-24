@@ -48,10 +48,10 @@
                 <a class="navbar-brand"><b>T</b>ESTOPOL</a>
                 <div class="collapse navbar-collapse">
                     <div class="navbar-nav ms-auto">
-                        <a class='nav-item nav-link active' href='..'>Do strony głównej</a>
+                        <a class='nav-item nav-link active' href='..'><i class='bi-house-fill'></i> Strona główna</a>
                         <?php if(!isset($_SESSION["loggedin"]) || !$_SESSION["loggedin"]): ?>
-                            <a class='nav-item nav-link active' href='../ui/login.php'>Zaloguj się</a>
-                            <a class='nav-item nav-link active' href='../ui/register.php'>Zarejestruj się</a>
+                            <a class='nav-item nav-link active' href='../ui/login.php'><i class='bi-person-check-fill'></i> Zaloguj się</a>
+                            <a class='nav-item nav-link active' href='../ui/register.php'><i class='bi-person-plus-fill'></i> Zarejestruj się</a>
                         <?php else: ?>
                             <span class='nav-item nav-link active'>Witaj, <b><?php echo $_SESSION['username'] ?></b></span>
                             <a class='nav-item nav-link active' href='../ui/userpage.php'><u>Strona użytkownika</u></a>

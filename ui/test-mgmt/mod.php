@@ -63,6 +63,20 @@
         <link rel="stylesheet" href="../../style/main.css">
         <style>
             body{ font: 14px sans-serif; text-align: center;}
+            #mod {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            @media screen and (min-width: 768px) {
+                #mod {
+                    width: 80%;
+                }
+            }
+            @media screen and (min-width: 992px) {
+                #mod {
+                    width: 60%;
+                }
+            }
         </style>
     </head>
     <body>
@@ -71,16 +85,16 @@
             <a class="navbar-brand"><b>T</b>ESTOPOL</a>
                 <div class="collapse navbar-collapse">
                     <div class="navbar-nav ms-auto">
-                        <a class="nav-item nav-link active" href='../userpage.php'>Powrót do strony użytkownika</a>
-                        <a class="nav-item nav-link active" href='../../index.php'>Powrót do strony głównej</a>
+                        <a class="nav-item nav-link active" href='../userpage.php'><i class='bi-person-circle'></i> Strona użytkownika</a>
+                        <a class="nav-item nav-link active" href='/index.php'><i class='bi-house-fill'></i> Strona główna</a>
                     </div>
                 </div>
             </div>
         </nav>
         <div class="wrapper">
             <div class="container">
-                <form method="post">
-                    <h2 class="my-5">Wybierz moduł do modyfikacji...</h2>
+                <h2 class="my-5">Wybierz moduł do modyfikacji...</h2>
+                <form method="post" id='mod'>
                     <div class="form-group">
                         <select name="id" class="form-control">
                             <option value="">--Wybierz opcję--</option>
@@ -99,7 +113,7 @@
                         <input type="text" class="form-control" id="name" name="name">
                     </div>      
                     <div class="form-group">
-                        <input type="submit" class="btn btn-primary" value="Zatwierdź">
+                        <button type="submit" class="btn btn-primary"><i class='bi-check'></i> Wybierz</button>
                     </div>
                 </form>
                 <?php echo "<p id=\"notice\" class=\"${notice_class}\">${notice}</p>"; ?>

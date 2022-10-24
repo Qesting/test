@@ -172,7 +172,8 @@
             <a class="navbar-brand"><b>T</b>ESTOPOL</a>
                 <div class="collapse navbar-collapse">
                     <div class="navbar-nav ms-auto">
-                        <a class="nav-item nav-link active" href='../index.php'>Powrót do strony głównej</a>
+                        <a class="nav-item nav-link active" href='../'><i class='bi-house-fill'></i> Strona główna</a>
+                        <a class='nav-item nav-link active' href='.'><i class='bi-card-text'></i> Testy</a>
                     </div>
                 </div>
             </div>
@@ -207,7 +208,7 @@
                         <?php echo "<input type='text' name='s' id='s' placeholder='Kod sesji' class='form-control' value='${sCode}'>" ?>
                     </div>
                     <div class="form-group">
-                        <input type="submit" name="start" class="btn btn-primary" value="Zatwierdź">
+                        <button type="submit" name="start" class="btn btn-primary"><i class='bi-check'></i> Rozpocznij</button>
                     </div>
                 </form>
                 <?php echo "<p id=\"notice\" class=\"${notice_class}\">${notice}</p>"; ?>

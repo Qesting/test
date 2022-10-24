@@ -57,9 +57,9 @@
             <a class="navbar-brand"><b>T</b>ESTOPOL</a>
                 <div class="collapse navbar-collapse">
                     <div class="navbar-nav ms-auto">
-                        <a class="nav-item nav-link active" href='sessions.php'>Powrót do strony sesji</a>
-                        <a class="nav-item nav-link active" href='../userpage.php'>Powrót do strony użytkownika</a>
-                        <a class="nav-item nav-link active" href='../../index.php'>Powrót do strony głównej</a>
+                        <a class="nav-item nav-link active" href='sessions.php'><i class='bi-calendar-week'></i> Sesje</a>
+                        <a class="nav-item nav-link active" href='../userpage.php'><i class='bi-person-circle'></i> Strona użytkownika</a>
+                        <a class="nav-item nav-link active" href='/index.php'><i class='bi-house-fill'></i> Strona główna</a>
                     </div>
                 </div>
             </div>

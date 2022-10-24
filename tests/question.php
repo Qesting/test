@@ -34,18 +34,6 @@
     $qnum = 0;
     $qcount = count($test->testQuestions);
 
-    $btn = "<div class='form-group mt-3' style='text-align: center;'>
-                <div class='btn-group'>
-                    <button type='button' class='btn btn-secondary' id='prev'>Poprzednie pytanie</button>
-                    <span class='btn btn-outline-secondary disabled'></span>
-                    <button type='button' class='btn btn-secondary' id='next'>Następne pytanie</button>
-                </div>
-            </div>";
-
-    $prevNext = ($test->testVert == 0) ? $btn : "";
-    $script = ($test->testVert == 0) ? "<script src='../js/questTabs.js'></script>" : "<script src='../js/layout.js'></script>";
-    $sub = ($test->testVert != 0) ? "<input type='submit' class='btn btn-primary mt-3' value='Zatwierdź'>" : "";
-
     ?>
 
 <!DOCTYPE html>
@@ -91,9 +79,19 @@
                         }
                         $sub = ($i == $qcount - 1) ? "<input type='submit' class='btn btn-primary mt-3' value='Zatwierdź'>" : $sub;
                     ?>
-                    <?php echo $prevNext; ?>
+                    <?php if ($test->testVert === 0): ?>
+                        <div class='form-group mt-3' style='text-align: center;'>
+                            <div class='btn-group'>
+                                <button type='button' class='btn btn-secondary' id='prev'><i class='bi-caret-left-fill'></i> Poprzednie pytanie</button>
+                                <span class='btn btn-outline-secondary disabled'></span>
+                                <button type='button' class='btn btn-secondary' id='next'>Następne pytanie <i class='bi-caret-right-fill'></i></button>
+                            </div>
+                        </div>
+                    <?php endif ?>
                     <section class='form-group' id='sub-grp' style="text-align: center;">
-                        <?php echo $sub; ?>
+                        <?php if ($test->testVert !== 0): ?>
+                            <button type='submit' class='btn btn-primary mt-3' ><i class='bi-check'></i> Zakończ test</button>
+                        <?php endif ?>
                     </section>
                 </form>
                 <p id="alert"></p>
@@ -116,6 +114,10 @@
                 }
             }, 1000);
         </script>
-        <?php echo $script; ?>
+        <?php if ($test->testVert === 0): ?>
+            <script src='../js/questTabs.js'></script>
+        <?php else: ?>
+            <script src='../js/layout.js'></script>
+        <?php endif ?>
     </body>
 </html>

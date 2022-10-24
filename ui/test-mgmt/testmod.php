@@ -79,9 +79,9 @@
             <a class="navbar-brand"><b>T</b>ESTOPOL</a>
                 <div class="collapse navbar-collapse">
                     <div class="navbar-nav ms-auto">
-                        <a class="nav-item nav-link active" href='quest.php'>Powrót do modyfikacji pytań</a>
-                        <a class="nav-item nav-link active" href='../userpage.php'>Powrót do strony użytkownika</a>
-                        <a class="nav-item nav-link active" href='../../index.php'>Powrót do strony głównej</a>
+                        <a class="nav-item nav-link active" href='quest.php'><i class='bi-question-lg'></i> Pytania</a>
+                        <a class="nav-item nav-link active" href='../userpage.php'><i class='bi-person-circle'></i> Strona użytkownika</a>
+                        <a class="nav-item nav-link active" href='/index.php'><i class='bi-house-fill'></i> Strona główna</a>
                     </div>
                 </div>
             </div>
@@ -113,7 +113,7 @@
                     </div>
                     </div>      
                     <div class="form-group">
-                        <input type="submit" name="save" class="btn btn-primary" value="Zatwierdź">
+                        <button type='submit' name='save' class='btn btn-primary'><span class='bi-save2'></span> Zapisz zmiany</button>
                     </div>
                 </form>
             </div>

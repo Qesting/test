@@ -35,6 +35,6 @@
 
         echo '<div><h2>
         '.$grade_str.'
-        </h2>.'.$img.'</div>';
+        </h2>'.$img.'</div>';
     }
 ?>

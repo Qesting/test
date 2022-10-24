@@ -89,7 +89,7 @@
         $quest = unserialize($_SESSION['test'])->testQuestions;
         $points = 0;
 
-        if(is_array($ans)) {
+        if(is_array($ans) && count($ans) > 0) {
 
             for ($i = 0; $i < count($quest); $i++) {
 

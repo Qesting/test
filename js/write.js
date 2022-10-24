@@ -83,7 +83,7 @@ const stringSize = value => {
         if (!changed) changed = true;
         let count = stringSize(target.value);
         if (count > limit) {
-            target.value = target.value.substring(0,count);
+            target.value = target.value.substring(0,limit);
         }
         n.textContent = `${count > limit ? limit : count}/${limit}`;
     });
@@ -101,7 +101,7 @@ const stringSize = value => {
         const v2 = val.substring(0,start)
         +(/(\n\r?)+\s*$/.test(val.substring(0,start)) ? '' : '\n\n')
         +'#'.repeat(n.dataset.count)
-        +' '+selected;
+        +' '+selected+(start !== end ? '\n\n' : '');
         currentTextArea.value = v2+val.substring(end);
         currentTextArea.selectionStart = v2.length + 1;
         currentTextArea.selectionEnd = v2.length;
@@ -149,7 +149,7 @@ ol.addEventListener('click', () => {
     let sNew = [];
     const mNum = selected.match(/.+ {2,}\n\r?|.+$/g);
     if (mNum.length !== 0) {
-        mNum.forEach((n, i) => sNew.push((i+1)+'. '+n));
+        mNum.forEach((n, i) => sNew.push((i+1)+'. '+n+'  '));
         sNew = sNew.join('');
     } else sNew = "";
     const v2 = val.substring(0,start)+sNew;
@@ -168,7 +168,7 @@ ul.addEventListener('click', () => {
     let sNew = [];
     const mNum = selected.match(/.+ {2,}\n\r?|.+$/g);
     if (mNum.length !== 0) {
-        mNum.forEach((n) => sNew.push('* '+n));
+        mNum.forEach((n) => sNew.push('* '+n+'  '));
         sNew = sNew.join('');
     } else sNew = "";
     const v2 = val.substring(0,start)+sNew;
